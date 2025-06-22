@@ -2,6 +2,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 
 import time
 
@@ -75,3 +77,77 @@ class YaPage:
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'ul.serp-list'))
         )
+        self.driver.quit()
+
+    def mts_music_open_page(self):
+        original_window = self.driver.current_window_handle
+
+        mts_music_link = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//span[contains(text(),"Слушать")]'))
+        )
+        mts_music_link.click()
+        WebDriverWait(self.driver, 10).until(EC.number_of_windows_to_be(2))
+
+        for handle in self.driver.window_handles:
+            if handle != original_window:
+                self.driver.switch_to.window(handle)
+                break
+
+    def accept_cookies(self):
+        try:
+            accept_button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@class="button_wrapper__hyCP8 mtsds-c1-bold-upp-wide button_size__m__0hq4N button_alwaysWhite__HEPeo button_secondaryGray__IFHOC"]'))
+            )
+            accept_button.click()
+        except:
+            pass
+
+    def sound_search_input(self, query):
+        search_input = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//input[contains(@class, "input-search_input")]'))
+        )
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys(query)
+
+        try:
+            search_button = WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, '//button[contains(@class, "input-search_icon__")]'))
+            )
+            search_button.click()
+        except TimeoutException:
+            search_input.send_keys(Keys.RETURN)
+
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//div[contains(@class,"track-row_track_cover_wrapper")]'))
+        )
+
+    def play_button(self):
+        play_buttons = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, '(//div[contains(@class, "track-row_track_cover_wrapper")])[1]'))
+        )
+        if play_buttons:
+            play_buttons[0].click()
+
+    def close_yandex_popup(self):
+        try:
+            not_now_button = WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@class="Button Distribution-Button Distribution-ButtonClose Distribution-ButtonClose_view_button Button_view_default Button_size_m"]'))
+            )
+            not_now_button.click()
+        except:
+            pass
+
+
+    def close_mts_popup(self):
+        try:
+            close_button = WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, '//button[contains(@class, "close_button")]'))
+            )
+            close_button.click()
+        except:
+            pass
+
+
+

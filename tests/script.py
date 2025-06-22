@@ -55,3 +55,21 @@ def test_search(driver):
     ya.input_search("Гитлер моя война")
     ya.press_enter()
     ya.wait_for_search_results()
+
+def test_mts_search(driver):
+    ya = YaPage(driver)
+    ya.open()
+    ya.input_search("мтс музыка")
+    ya.press_enter()
+    ya.close_yandex_popup()
+    ya.mts_music_open_page()
+    ya.close_mts_popup()
+    ya.accept_cookies()
+    ya.sound_search_input("korn open up")
+    ya.play_button()
+
+
+
+
+
+
