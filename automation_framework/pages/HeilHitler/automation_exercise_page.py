@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
 
 
 class AutoExercise:
@@ -80,8 +81,8 @@ class AutoExercise:
 
         # Address fields
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='first_name']"))).send_keys("Anton")
-        wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='last_name']"))).send_keys("Ban")
-        wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='company']"))).send_keys("Dera")
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='last_name']"))).send_keys("Trump")
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='company']"))).send_keys("Cabaleron")
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='address1']"))).send_keys("st. Kyiv, д. 69")
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='address2']"))).send_keys("st. Obolon, д.37")
 
@@ -112,7 +113,7 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, "//*[@class='nav navbar-nav']"))
         )
         text = element.text.strip()
-        assert "Anton Ban Dera" in text, f"Ожидали увидеть 'Anton Ban Dera' в тексте, но получили: «{text}»"
+        assert "Anton Trump Cabaleron" in text, f"Ожидали увидеть 'Anton Trump Cabaleron' в тексте, но получили: «{text}»"
 
     def delete_account(self):
         delete = WebDriverWait(self.driver, 10).until(
@@ -178,10 +179,19 @@ class AutoExercise:
         signup.click()
 
     def contact_us_button(self):
-        contact = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='/contact-us']"))
-        )
-        contact.click()
+        try:
+            xpath = "//a[contains(text(), 'Contact us')]"
+            contact = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, xpath))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", contact)
+
+            WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, xpath))
+            ).click()
+
+        except TimeoutException:
+            raise AssertionError("❌ Кнопка 'Contact us' не найдена или не кликабельна.")
 
     def contact_us_mail(self):
         wait = WebDriverWait(self.driver, 10)
