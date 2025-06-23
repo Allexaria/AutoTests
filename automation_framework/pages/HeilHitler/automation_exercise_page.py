@@ -159,15 +159,17 @@ class AutoExercise:
         logout.click()
 
     def fill_email_and_name(self):
-        fill_name = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="signup-name"]'))
+        fill_password = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
         )
-        fill_name.click()
+        fill_password.click()
+        fill_password.send_keys("12345678Aa")
 
         fill_email = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="signup-email"]'))
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
         )
         fill_email.click()
+        fill_email.send_keys("antoniobandera@gmail.com")
 
     def signup_button(self):
         signup = WebDriverWait(self.driver, 10).until(
@@ -202,4 +204,21 @@ class AutoExercise:
 
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/']"))).click()
 
+    def login_button(self):
+        login = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@data-qa="login-button"]'))
+        )
+        login.click()
 
+    def login_into_account_existing(self):
+            login = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
+            )
+            login.click()
+            login.send_keys("antoniobandera@gmail.com")
+
+            password = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
+            )
+            password.click()
+            password.send_keys("12345678Aa")

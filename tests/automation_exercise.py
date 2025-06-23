@@ -21,9 +21,8 @@ def test_logout_user(driver):
     ae = AutoExercise(driver)
     ae.open_and_verify()
     ae.login_page_click_verify()
-    ae.signup_new_user()
-    ae.fill_user_info()
-    ae.account_created()
+    ae.login_into_account_existing()
+    ae.login_button()
     ae.logout()
 
 def test_register_with_existing_email(driver):
