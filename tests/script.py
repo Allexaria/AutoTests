@@ -1,4 +1,5 @@
 from pages.HeilHitler.ya_page import YaPage
+import time
 
 
 def test_ya_ru(driver):
@@ -23,6 +24,8 @@ def test_svg_camera(driver):
 
     ya.search_button()
 
+
+# негативные тесты
 
 def test_empty_search_query(driver):
     ya = YaPage(driver)
@@ -49,6 +52,8 @@ def test_long_image_url(driver):
     ya.find_button()
     ya.error_message()
 
+# Дальше идут просто тест-кейсы
+
 def test_search(driver):
     ya = YaPage(driver)
     ya.open()
@@ -63,7 +68,7 @@ def test_mts_search(driver):
     ya.press_enter()
     ya.close_yandex_popup()
     ya.mts_music_open_page()
-    ya.close_mts_popup()
+    ya.esc_button()
     ya.accept_cookies()
     ya.sound_search_input("korn open up")
     ya.play_button()

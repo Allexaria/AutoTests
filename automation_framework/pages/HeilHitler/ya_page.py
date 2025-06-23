@@ -79,6 +79,7 @@ class YaPage:
         )
         self.driver.quit()
 
+
     def mts_music_open_page(self):
         original_window = self.driver.current_window_handle
 
@@ -129,6 +130,7 @@ class YaPage:
         )
         if play_buttons:
             play_buttons[0].click()
+            time.sleep(6)
 
     def close_yandex_popup(self):
         try:
@@ -149,5 +151,11 @@ class YaPage:
         except:
             pass
 
-
-
+    def esc_button(self):
+        try:
+            body = WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.TAG_NAME, 'body'))
+            )
+            body.send_keys(Keys.ESCAPE)
+        except:
+            pass
