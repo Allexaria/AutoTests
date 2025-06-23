@@ -30,7 +30,8 @@ def test_register_with_existing_email(driver):
     ae.open_and_verify()
     ae.login_page_click_verify()
     ae.fill_email_and_name()
-    ae.signup_new_user()
+    ae.signup_button()
+    ae.error_user()
 
 def test_contact_us(driver):
     ae = AutoExercise(driver)

@@ -31,13 +31,13 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-name']"))
         )
         name_field.click()
-        name_field.send_keys("Anton Ban Dera")
+        name_field.send_keys("Anton Trump Cabaleron")
 
         email_field = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-email']"))
         )
         email_field.click()
-        email_field.send_keys("antoniobandera@gmail.com")
+        email_field.send_keys("ilikehotgirls@trump.com")
 
         signup_button = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-button']"))
@@ -159,14 +159,14 @@ class AutoExercise:
         logout.click()
 
     def fill_email_and_name(self):
-        fill_password = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
+        fill_name = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="signup-name"]'))
         )
-        fill_password.click()
-        fill_password.send_keys("12345678Aa")
+        fill_name.click()
+        fill_name.send_keys("Anton Ban Dera")
 
         fill_email = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="signup-email"]'))
         )
         fill_email.click()
         fill_email.send_keys("antoniobandera@gmail.com")
@@ -222,3 +222,12 @@ class AutoExercise:
             )
             password.click()
             password.send_keys("12345678Aa")
+
+    def error_user(self):
+        error = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, '//p[contains(text(), "Email Address already exist")]')
+            )
+        )
+
+        assert "Email Address already exist" in error.text
