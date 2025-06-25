@@ -29,6 +29,19 @@ def test_open_and_verify(driver):
         ae.delete_account()
 
 @pytest.mark.flaky(reruns=3, reruns_delay=3)
+def test_login_with_correct_username(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Opens main page"):
+        ae.open_and_verify()
+
+    with allure.step("Login Page"):
+        ae.login_page_click_verify()
+
+    with allure.step("Login"):
+        ae.fill_email_and_password()
+
+@pytest.mark.flaky(reruns=3, reruns_delay=3)
 def test_incorrect_login(driver):
     ae = AutoExercise(driver)
 

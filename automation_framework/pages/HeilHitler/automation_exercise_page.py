@@ -296,3 +296,21 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Brand')]"))
         )
         assert brand.is_displayed(), "Brand is not displayed"
+
+    def fill_email_and_password(self):
+        email = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
+        )
+        email.click()
+        email.send_keys("antoniobandera@gmail.com")
+
+        password = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
+        )
+        password.click()
+        password.send_keys("12345678Aa")
+
+        login_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-button"]'))
+        )
+        login_button.click()
