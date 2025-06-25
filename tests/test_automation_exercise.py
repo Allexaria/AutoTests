@@ -127,3 +127,79 @@ def test_verify_all_products(driver):
 
     with allure.step("All Products Details Verified"):
         ae.details()
+
+@pytest.mark.flaky(reruns=2, reruns_delay=2)
+def test_search_products(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Open  Products"):
+        ae.products()
+
+    with allure.step("Products Search"):
+        ae.search_products()
+
+@pytest.mark.flaky(reruns=2, reruns_delay=2)
+def test_subscriptions(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Scroll to Footer and create subscription"):
+        ae.scroll_to_footer()
+
+@pytest.mark.flaky(reruns=2, reruns_delay=2)
+def test_cart_subscription(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Cart"):
+        ae.cart_button()
+
+    with allure.step("Footer"):
+        ae.footer()
+
+    with allure.step("Subscribe"):
+        ae.subscription()
+
+@pytest.mark.flaky(reruns=2, reruns_delay=2)
+def test_cart_total(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Products"):
+        ae.products()
+
+    with allure.step("Products Total"):
+        ae.product_add_to_cart()
+
+def test_verify_product_quantity(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("View Product"):
+        ae.view_product_button()
+
+    with allure.step(" Quantity"):
+        ae.increase_quantity_to_4()
+
+    with allure.step("Space"):
+        ae.click_on_white_space()
+
+    with allure.step("Add to cart"):
+        ae.add_to_cart()
+
+    with allure.step("Cart"):
+        ae.cart_button()
+
+    with allure.step("Verify Quantity"):
+        ae.verify_product_quantity(4)

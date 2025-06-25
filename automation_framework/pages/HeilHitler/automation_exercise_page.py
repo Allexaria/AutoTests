@@ -1,5 +1,7 @@
 import time
 
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -314,3 +316,178 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-button"]'))
         )
         login_button.click()
+
+    def search_products(self):
+        search_input = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "search_product"))
+        )
+        search_input.click()
+        search_input.send_keys("Little Girls Mr. Panda Shirt")
+
+        button_search = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "submit_search"))
+        )
+        button_search.click()
+
+        searched_products = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="title text-center"]'))
+        )
+        assert searched_products.is_displayed(), "Search products is not displayed"
+
+    def products(self):
+        products_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/products']"))
+        )
+        products_button.click()
+
+    def scroll_to_footer(self):
+        footer = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "footer-bottom"))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", footer)
+
+        subscription = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h2[text()='Subscription']"))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", subscription)
+
+        email_adress = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID,  "susbscribe_email" ))
+        )
+        email_adress.click()
+        email_adress.send_keys("ilikehotgirls@trump.com")
+
+        submit = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "subscribe"))
+        )
+        submit.click()
+
+        successfully = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="alert-success alert"]'))
+        )
+        assert successfully.is_displayed(),  'You have been successfully subscribed!'
+
+    def cart_button(self):
+        cart_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/view_cart']"))
+        )
+        cart_button.click()
+
+    def footer(self):
+        footer = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "footer-bottom"))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", footer)
+
+    def subscription(self):
+        subscription = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h2[text()='Subscription']"))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", subscription)
+
+        email_address = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "susbscribe_email"))
+        )
+        email_address.click()
+        email_address.send_keys("ilikehotgirls@trump.com")
+
+        submit = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "subscribe"))
+        )
+        submit.click()
+
+        successfully = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="alert-success alert"]'))
+        )
+        assert successfully.is_displayed(),  'You have been successfully subscribed!'
+
+    def product_add_to_cart(self):
+        add_to_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//a[@data-product-id="1"]'))
+        )
+        add_to_cart_button.click()
+
+        continue_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//button[text()="Continue Shopping"]'))  # пример
+        )
+        continue_button.click()
+
+        second_product_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//a[@data-product-id="2"]'))
+        )
+        second_product_button.click()
+
+        view_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH,'//u[text()="View Cart"]'))
+        )
+        view_cart_button.click()
+
+        price = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="price"]'))
+        )
+        assert price.is_displayed(), 'Price'
+
+        quantity = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="quantity"]'))
+        )
+        assert quantity.is_displayed(), 'Quantity'
+
+        total = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="total"]'))
+        )
+        assert total.is_displayed(), 'Total'
+
+
+    def view_cart_button(self):
+        view_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH,'//u[text()="View Cart"]'))
+        )
+        view_cart_button.click()
+
+    def view_product_button(self):
+        view_product_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/product_details/1']"))
+        )
+        view_product_button.click()
+
+    def increase_quantity_to_4(self):
+        increase_quantity_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "quantity"))
+        )
+        increase_quantity_button.click()
+        increase_quantity_button.clear()
+        increase_quantity_button.send_keys("4")
+
+    def add_to_cart_button(self):
+        add_to_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type="button"]'))
+        )
+        add_to_cart_button.click()
+
+    def verify_product_quantity(self, expected_quantity):
+        quantity_element = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="cart_quantity"]'))
+        )
+
+        actual_quantity = quantity_element.text.strip()
+        assert actual_quantity == str(
+            expected_quantity), f'❌ Expected quantity: {expected_quantity}, but found: {actual_quantity}'
+
+    def add_to_cart(self):
+        add_to_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@class="btn btn-default cart"]'))
+        )
+        add_to_cart_button.click()
+
+        view_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH,'//u[text()="View Cart"]'))
+        )
+        view_cart_button.click()
+
+    def click_on_white_space(self):
+        white_space_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "body"))
+        )
+
+        actions = ActionChains(self.driver)
+        actions.move_to_element_with_offset(white_space_button, 10, 10).click().perform()
