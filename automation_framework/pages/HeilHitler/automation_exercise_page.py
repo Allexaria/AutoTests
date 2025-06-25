@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
+import pytest
 
 
 class AutoExercise:
@@ -241,3 +242,57 @@ class AutoExercise:
         )
 
         assert "Email Address already exist" in error.text
+
+    def cases_test(self):
+        cases = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/test_cases"]'))
+        )
+        cases.click()
+
+    def products_test(self):
+        products = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/products"]'))
+        )
+        products.click()
+
+    def all_products_verified(self):
+        all_products = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="title text-center"]'))
+        )
+        assert all_products.is_displayed(), "'All Products' title not visible"
+
+    def details(self):
+        view_product = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/product_details/18"]'))
+        )
+        view_product.click()
+
+        name = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH,   "//h2[contains(text(), 'Little Girls Mr. Panda Shirt')]" ))
+        )
+        assert name.is_displayed(), "Product name is not displayed"
+
+        category = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'Category: Kids > Tops & Shirts')]"))
+        )
+        assert category.is_displayed(), "Category is not displayed"
+
+        price = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Rs. 1200')]"))
+        )
+        assert price.is_displayed(), "Price is not displayed"
+
+        availability = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Availability')]"))
+        )
+        assert availability.is_displayed(), "Availability is not displayed"
+
+        condition = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Condition')]"))
+        )
+        assert condition.is_displayed(), "Condition is not displayed"
+
+        brand = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Brand')]"))
+        )
+        assert brand.is_displayed(), "Brand is not displayed"
