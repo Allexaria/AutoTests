@@ -438,3 +438,86 @@ def test_view_category_products(driver):
 
     with allure.step("Men T-shirts verify"):
         ae.t_shirts_verify()
+
+def test_view_cart_brand_products(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Products"):
+        ae.products()
+
+    with allure.step("Brand Verif"):
+        ae.brands_verif()
+
+    with allure.step("Brand Biba"):
+        ae.biba_brand()
+
+    with allure.step("Biba Verify"):
+        ae.biba_verify()
+
+    with allure.step("H&M brand"):
+        ae.h_m_brand()
+
+    with allure.step("H&M brand verify"):
+        ae.h_m_verify()
+
+def test_search_and_verify_cart_after_login(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Products"):
+        ae.products()
+
+    with allure.step("Verify Products"):
+        ae.all_products_verify()
+
+    with allure.step("Search Products"):
+        ae.search_and_verify()
+
+    with allure.step("Add to cart"):
+        ae.add_to_cart_from_page()
+
+    with allure.step("Cart"):
+        ae.cart_and_open()
+
+    with allure.step("Panda Verify"):
+        ae.verify_panda()
+
+    with allure.step("Login"):
+        ae.login_page_click_verify()
+
+    with allure.step("Login into account"):
+        ae.login_into_account_existing()
+
+    with allure.step("login button"):
+        ae.login_button()
+
+    with allure.step("Again cart"):
+        ae.cart_button()
+
+    with allure.step("Cart Verify"):
+        ae.verify_panda()
+def test_add_review_on_product(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Products"):
+        ae.products()
+
+    with allure.step("Products Verified"):
+        ae.all_products_verify()
+
+    with allure.step("View product"):
+        ae.view_product_button()
+
+    with allure.step("Add review"):
+        ae.review_on_product()
+
+    with allure.step("Review Verify"):
+        ae.thank_you_text()

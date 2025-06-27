@@ -373,6 +373,7 @@ class AutoExercise:
         )
         cart_button.click()
 
+
     def footer(self):
         footer = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "footer-bottom"))
@@ -682,3 +683,112 @@ class AutoExercise:
         )
         password.click()
         password.send_keys("12345678Aa")
+
+    def brands_verif(self):
+        brands_verif = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[text()="Brands"]'))
+        )
+        assert brands_verif.is_displayed(), "'Brands' is not displayed"
+
+    def biba_brand(self):
+        biba_brand = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/brand_products/Biba"]' ))
+        )
+        biba_brand.click()
+
+    def biba_verify(self):
+        biba_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[text()="Brand - Biba Products"]'))
+        )
+        assert biba_verify.is_displayed(), "'Brand' Biba is not displayed"
+
+    def h_m_brand(self):
+        h_m_brand = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/brand_products/H&M"]'))
+        )
+        h_m_brand.click()
+
+    def h_m_verify(self):
+        h_m_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[text()="Brand - H&M Products"]'))
+        )
+        assert h_m_verify.is_displayed(), "'H&M Products' is not displayed"
+
+    def all_products_verify(self):
+        all_products_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[text() = "All Products"]'))
+        )
+        assert all_products_verify.is_displayed(), "'All Products' is not displayed"
+
+    def search_and_verify(self):
+        search_input = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "search_product"))
+        )
+        search_input.click()
+        search_input.send_keys("Little Girls Mr. Panda Shirt")
+
+        button_search = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "submit_search"))
+        )
+        button_search.click()
+
+        searched_products_title = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@class="title text-center"]'))
+        )
+        assert searched_products_title.is_displayed(), "Search products title is not displayed"
+
+        product_names = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, '//div[@class="productinfo text-center"]/p'))
+        )
+
+        assert len(product_names) > 0, "No products found after search"
+
+        for product in product_names:
+            assert "panda" in product.text.lower(), f"Unexpected product: {product.text}"
+
+    def verify_panda(self):
+        verify_panda = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/product_details/18"]'))
+        )
+        assert verify_panda.is_displayed(), "'Panda' is not displayed"
+
+    def cart_and_open(self):
+        add_to_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//a[@data-product-id="18"]'))
+        )
+        add_to_cart_button.click()
+
+        view_cart_popup_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//u[text()="View Cart"]'))
+        )
+        view_cart_popup_button.click()
+
+    def review_on_product(self):
+        name = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'name'))
+        )
+        name.click()
+        name.send_keys("Antoshka")
+
+        email = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'email'))
+        )
+        email.click()
+        email.send_keys("namaybytnee@zirki.com")
+
+        review = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'review'))
+        )
+        review.click()
+        review.send_keys("Hyita")
+
+        submit = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'button-review'))
+        )
+        submit.click()
+
+    def thank_you_text(self):
+        thank_you_text = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//span[text()="Thank you for your review."]'))
+        )
+        assert thank_you_text.is_displayed(), "'Thank you for your review.'"
