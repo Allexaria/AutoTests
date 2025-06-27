@@ -6,7 +6,7 @@ import pytest
 @allure.title("Test: Register New User And Delete Account")
 @allure.description("Opens main page, signs up, verifies account creation, and deletes it")
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
+
 def test_open_and_verify(driver):
     ae = AutoExercise(driver)
 
@@ -28,7 +28,6 @@ def test_open_and_verify(driver):
     with allure.step("Delete Account"):
         ae.delete_account()
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
 def test_login_with_correct_username(driver):
     ae = AutoExercise(driver)
 
@@ -38,10 +37,14 @@ def test_login_with_correct_username(driver):
     with allure.step("Login Page"):
         ae.login_page_click_verify()
 
+    with allure.step("verify"):
+        ae.login_verify()
+
     with allure.step("Login"):
         ae.fill_email_and_password()
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
+
+
 def test_incorrect_login(driver):
     ae = AutoExercise(driver)
 
@@ -54,7 +57,7 @@ def test_incorrect_login(driver):
     with allure.step("Login Into Account"):
         ae.login_into_account()
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
+
 def test_logout_user(driver):
     ae = AutoExercise(driver)
 
@@ -70,7 +73,7 @@ def test_logout_user(driver):
     with allure.step("Login Button"):
         ae.login_button()
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
+
 def test_register_with_existing_email(driver):
     ae = AutoExercise(driver)
 
@@ -89,7 +92,7 @@ def test_register_with_existing_email(driver):
     with allure.step("Error User"):
         ae.error_user()
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
+
 def test_contact_us(driver):
     ae = AutoExercise(driver)
 
@@ -105,7 +108,7 @@ def test_contact_us(driver):
     with allure.step("Contact Us Mail Button"):
         ae.contact_us_mail()
 
-@pytest.mark.flaky(reruns=3, reruns_delay=3)
+
 def test_cases(driver):
     ae = AutoExercise(driver)
 
@@ -115,7 +118,7 @@ def test_cases(driver):
     with allure.step("Cases Page Click"):
         ae.cases_test()
 
-@pytest.mark.flaky(reruns=2, reruns_delay=2)
+
 def test_verify_all_products(driver):
     ae = AutoExercise(driver)
 
@@ -128,7 +131,7 @@ def test_verify_all_products(driver):
     with allure.step("All Products Details Verified"):
         ae.details()
 
-@pytest.mark.flaky(reruns=2, reruns_delay=2)
+
 def test_search_products(driver):
     ae = AutoExercise(driver)
 
@@ -141,7 +144,7 @@ def test_search_products(driver):
     with allure.step("Products Search"):
         ae.search_products()
 
-@pytest.mark.flaky(reruns=2, reruns_delay=2)
+
 def test_subscriptions(driver):
     ae = AutoExercise(driver)
 
@@ -151,7 +154,7 @@ def test_subscriptions(driver):
     with allure.step("Scroll to Footer and create subscription"):
         ae.scroll_to_footer()
 
-@pytest.mark.flaky(reruns=2, reruns_delay=2)
+
 def test_cart_subscription(driver):
     ae = AutoExercise(driver)
 
@@ -167,7 +170,7 @@ def test_cart_subscription(driver):
     with allure.step("Subscribe"):
         ae.subscription()
 
-@pytest.mark.flaky(reruns=2, reruns_delay=2)
+
 def test_cart_total(driver):
     ae = AutoExercise(driver)
 
@@ -179,6 +182,7 @@ def test_cart_total(driver):
 
     with allure.step("Products Total"):
         ae.product_add_to_cart()
+
 
 def test_verify_product_quantity(driver):
     ae = AutoExercise(driver)
@@ -203,3 +207,234 @@ def test_verify_product_quantity(driver):
 
     with allure.step("Verify Quantity"):
         ae.verify_product_quantity(4)
+
+def test_register_while_checkout(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Add Product"):
+        ae.add_to_cart_from_page()
+
+    with allure.step("View"):
+        ae.view_product_button()
+
+    with allure.step(" Cart"):
+        ae.cart_button()
+
+    with allure.step("Checkout"):
+        ae.proceed_to_checkout()
+
+    with allure.step("Register"):
+        ae.login_register_in_cart()
+
+    with allure.step("Sign up"):
+        ae.signup_new_user()
+
+    with allure.step("user info"):
+        ae.fill_user_info()
+
+    with allure.step("Account created"):
+        ae.account_created()
+
+    with allure.step("View cart again"):
+        ae.cart_button()
+
+    with allure.step("Cart Verify"):
+        ae.cart_verify()
+
+    with allure.step("Checkout again"):
+        ae.proceed_to_checkout()
+
+    with allure.step("Verify Address"):
+        ae.address_details()
+
+    with allure.step("Verify Review"):
+        ae.review_your_order()
+
+    with allure.step("Comment"):
+        ae.text_area()
+
+    with allure.step("Place order"):
+        ae.place_order()
+
+    with allure.step("Card Details"):
+        ae.card_details()
+
+    with allure.step("Pay"):
+        ae.button_pay()
+
+    with allure.step("Delete Account"):
+        ae.delete_account()
+
+def test_order_register_before_checkout(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Login"):
+        ae.login_page_click_verify()
+
+    with allure.step("Sign up"):
+        ae.signup_new_user()
+
+    with allure.step("User info"):
+        ae.fill_user_info()
+
+    with allure.step("Account created"):
+        ae.account_created()
+
+    with allure.step("View product"):
+        ae.products()
+
+    with allure.step("Add Product"):
+        ae.add_to_cart_from_page()
+
+    with allure.step("View cart "):
+        ae.cart_button()
+
+    with allure.step("Cart Verify"):
+        ae.cart_verify()
+
+    with allure.step("Checkout"):
+        ae.proceed_to_checkout()
+
+    with allure.step("Verify Address"):
+        ae.address_details()
+
+    with allure.step("Verify Review"):
+        ae.review_your_order()
+
+    with allure.step("Comment"):
+        ae.text_area()
+
+    with allure.step("Place order"):
+        ae.place_order()
+
+    with allure.step("Card Details"):
+        ae.card_details()
+
+    with allure.step("Pay"):
+        ae.button_pay()
+
+    with allure.step("Delete Account"):
+        ae.delete_account()
+
+def test_login_before_checkout(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Login"):
+        ae.login_page_click_verify()
+
+    with allure.step("Sign up"):
+        ae.signup_new_user()
+
+    with allure.step("User info"):
+        ae.fill_user_info()
+
+    with allure.step("Account created"):
+        ae.account_created()
+
+    with allure.step("Logout"):
+        ae.logout()
+
+    with allure.step("Login Page again"):
+        ae.login_page_click_verify()
+
+    with allure.step("Login into"):
+        ae.login_into_account_that_got_created()
+
+    with allure.step("Login button"):
+        ae.login_button()
+
+    with allure.step("Add to cart"):
+        ae.add_to_cart_from_page()
+
+    with allure.step("Cart"):
+        ae.cart_button()
+
+    with allure.step("Cart Verify"):
+        ae.cart_verify()
+
+    with allure.step("Checkout"):
+        ae.proceed_to_checkout()
+
+    with allure.step("Verify Address"):
+        ae.address_details()
+
+    with allure.step("Verify Review"):
+        ae.review_your_order()
+
+    with allure.step("Comment"):
+        ae.text_area()
+
+    with allure.step("Place order"):
+        ae.place_order()
+
+    with allure.step("Card Details"):
+        ae.card_details()
+
+    with allure.step("Pay"):
+        ae.button_pay()
+
+    with allure.step("Delete Account"):
+        ae.delete_account()
+
+def test_remove_from_cart(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Add to cart"):
+        ae.add_to_cart_from_page()
+
+    with allure.step("View"):
+        ae.view_product_button()
+
+    with allure.step("Cart"):
+        ae.cart_button()
+
+    with allure.step("Cart Verify"):
+        ae.cart_verify()
+
+    with allure.step("Remove from cart"):
+        ae.x_from_cart()
+
+    with allure.step("Empty cart"):
+        ae.cart_empty()
+
+def test_view_category_products(driver):
+    ae = AutoExercise(driver)
+
+    with allure.step("Open and Verify"):
+        ae.open_and_verify()
+
+    with allure.step("Category Verify"):
+        ae.category()
+
+    with allure.step("Women Category"):
+        ae.women_button()
+
+    with allure.step("Dress Category"):
+        ae.dress_button()
+
+    with allure.step("Category Verify Again"):
+        ae.category()
+
+    with allure.step("Dress verify"):
+        ae.dress_verify()
+
+    with allure.step("Men Category"):
+        ae.men_category()
+
+    with allure.step("Men T-shirts"):
+        ae.t_shirts_menu()
+
+    with allure.step("Men T-shirts verify"):
+        ae.t_shirts_verify()

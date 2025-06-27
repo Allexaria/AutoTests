@@ -491,3 +491,194 @@ class AutoExercise:
 
         actions = ActionChains(self.driver)
         actions.move_to_element_with_offset(white_space_button, 10, 10).click().perform()
+
+    def verify_homepage(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "img[alt='Website for automation practice']"))
+        )
+        assert self.driver.current_url == 'https://automationexercise.com/'
+
+    def login_verify(self):
+        login_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//h2[normalize-space()='Login to your account']")
+            )
+        )
+        assert login_verify.is_displayed(), "'Login to your account' is not displayed"
+
+    def account_deleted(self):
+        element = WebDriverWait(self.driver, 10).until(
+           EC.presence_of_element_located((By.XPATH, "//*[@class='title text-center']"))
+        )
+        assert element.text.strip() == "ACCOUNT DELETED!", \
+            f"Ожидали текст 'ACCOUNT DELETED!', но получили: «{element.text.strip()}»"
+
+    def proceed_to_checkout(self):
+        proceed_to_checkout_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[class="btn btn-default check_out"]'))
+        )
+        proceed_to_checkout_button.click()
+
+    def cart_verify(self):
+        cart_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'li.active'))
+        )
+        assert cart_verify.is_displayed(), 'Cart is not displayed'
+
+    def login_register_in_cart(self):
+        login_register_in_cart = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//u[text()="Register / Login"]'))
+        )
+        login_register_in_cart.click()
+
+    def address_details(self):
+        address_details = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[contains(text(), "Address Details")]'))
+        )
+        assert address_details.is_displayed(), 'Address details is not displayed'
+
+    def review_your_order(self):
+        review_your_order_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[contains(text(), "Review Your Order")]'))
+        )
+        assert review_your_order_button.is_displayed(), 'Review Your Order is not displayed'
+
+    def text_area(self):
+        text_area = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'textarea.form-control'))
+        )
+        text_area.send_keys('Mord Ist Kunst')
+
+    def card_details(self):
+        card_details = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "name_on_card"))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_details)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.NAME, "name_on_card")))
+        card_details.click()
+        card_details.send_keys('Jeffrie Dahhmer')
+
+        card_number = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'card_number'))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_number)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.NAME, "card_number")))
+        card_number.click()
+        card_number.send_keys('1234 4567 8910 1112')
+
+        cvc = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'cvc'))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", cvc)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.NAME, "cvc")))
+        cvc.click()
+        cvc.send_keys('123')
+
+        expiration = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'expiry_month'))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", expiration)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.NAME, "expiry_month")))
+        expiration.click()
+        expiration.send_keys('12')
+
+        expire_year = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'expiry_year'))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", expire_year)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.NAME, "expiry_year")))
+        expire_year.click()
+        expire_year.send_keys('2090')
+
+    def button_pay(self):
+        pay_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@data-qa="pay-button"]'))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", pay_button)
+        pay_button.click()
+
+
+        WebDriverWait(self.driver, 15).until(
+            EC.url_contains("payment_done")
+        )
+
+    def add_to_cart_from_page(self):
+        add_to_cart_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@class="btn btn-default add-to-cart"]'))
+        )
+        add_to_cart_button.click()
+
+    def place_order(self):
+        place_order_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/payment"]'))
+        )
+        place_order_button.click()
+
+    def x_from_cart(self):
+        x =WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[class="cart_quantity_delete"]'))
+        )
+        x.click()
+
+    def cart_empty(self):
+        cart_empty = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "//b[text()='Cart is empty!']"))
+        )
+        assert cart_empty.is_displayed(), "'Cart is empty!' is not displayed"
+
+    def category(self):
+        category = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//h2[text()="Category"]'))
+        )
+        assert category.is_displayed(), "'Category' is not displayed"
+
+    def women_button(self):
+        women_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="#Women"]'))
+        )
+        women_button.click()
+
+    def dress_button(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "//a[@href='/category_products/1']"))
+        )
+
+        dress_button = self.driver.find_element(By.XPATH, "//a[@href='/category_products/1']")
+        dress_button.click()
+
+    def dress_verify(self):
+        dress_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h2[text()='Women - Dress Products']"))
+        )
+        assert dress_verify.is_displayed(), "'Women - Dress Products' is not displayed"
+
+    def men_category(self):
+        men_category = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="#Men"]'))
+        )
+        men_category.click()
+
+    def t_shirts_menu(self):
+        t_shirts_menu = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/category_products/3"]'))
+        )
+        t_shirts_menu.click()
+
+    def t_shirts_verify(self):
+        t_shirts_verify = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h2[text()='Men - Tshirts Products']"))
+        )
+        assert t_shirts_verify.is_displayed(), "'Tshirts Products' is not displayed"
+
+    def login_into_account_that_got_created(self):
+        login = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
+        )
+        login.click()
+        login.send_keys("ilikehotgirls@trump.com")
+
+        password = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
+        )
+        password.click()
+        password.send_keys("12345678Aa")
