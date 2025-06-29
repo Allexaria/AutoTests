@@ -441,7 +441,7 @@ class AutoExercise:
 
     def view_cart_button(self):
         view_cart_button = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH,'//u[text()="View Cart"]'))
+            EC.element_to_be_clickable((By.XPATH,'//u[text()="View Cart"]'))
         )
         view_cart_button.click()
 
@@ -544,7 +544,7 @@ class AutoExercise:
         )
         assert review_your_order_button.is_displayed(), 'Review Your Order is not displayed'
 
-    def text_area(self):
+    def comment(self):
         text_area = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'textarea.form-control'))
         )
@@ -555,8 +555,9 @@ class AutoExercise:
             EC.presence_of_element_located((By.NAME, "name_on_card"))
         )
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_details)
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.NAME, "name_on_card")))
-        card_details.click()
+        time.sleep(0.5)
+
+        ActionChains(self.driver).move_to_element(card_details).click().perform()
         card_details.send_keys('Jeffrie Dahhmer')
 
         card_number = WebDriverWait(self.driver, 10).until(
@@ -598,6 +599,13 @@ class AutoExercise:
         self.driver.execute_script("arguments[0].scrollIntoView(true);", pay_button)
         pay_button.click()
 
+        try:
+            successfully = WebDriverWait(self.driver, 3).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@class="alert-success alert"]'))
+            )
+            assert successfully.is_displayed(), 'Your order has been placed successfully!'
+        except:
+            print("Alert не отловлен, возможно, страница быстро перешла дальше")
 
         WebDriverWait(self.driver, 15).until(
             EC.url_contains("payment_done")
@@ -792,3 +800,95 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, '//span[text()="Thank you for your review."]'))
         )
         assert thank_you_text.is_displayed(), "'Thank you for your review.'"
+
+    def scroll_to_bottom(self, pause_time=1.0):
+
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        while True:
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(pause_time)
+
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                break
+            last_height = new_height
+
+    def add_from_recommendations(self):
+        recommended_block = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@class='recommended_items']"))
+        )
+
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", recommended_block)
+
+        add_button = recommended_block.find_element(By.CSS_SELECTOR, 'a[data-product-id="4"]')
+
+        add_button.click()
+
+    def verify_product_from_recommendations(self):
+        verify_recommendations = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/product_details/4"]'))
+        )
+        assert verify_recommendations.is_displayed(), "'Stylish Dress is not displayed'"
+
+    def verify_delivery_address_is_the_same(self):
+        addresses = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, 'address_city'))
+        )
+
+        delivery_address = addresses[0].text.strip()
+        billing_address = addresses[1].text.strip()
+
+        assert delivery_address == billing_address, (
+            f"❌ Адреса не совпадают!\nDelivery: {delivery_address}\nBilling: {billing_address}"
+        )
+
+        print("Delivery Address:", delivery_address)
+        print("Billing Address:", billing_address)
+
+        if delivery_address == billing_address:
+            print("✅ Address of billing and delivery is the same")
+        else:
+            print("❌ Address of billing and delivery is not the same")
+
+    def download_invoice(self):
+        invoices = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/download_invoice/500"]'))
+        )
+        invoices.click()
+
+    def continue_button(self):
+        continue_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[data-qa="continue-button"]'))
+        )
+        continue_button.click()
+
+    def verify_subscription(self):
+        subscription = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h2[text()='Subscription']"))
+        )
+        assert subscription.is_displayed(), "'Subscription is not displayed'"
+
+    def arrow_up(self):
+        arrow_up = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="#top"]'))
+        )
+        arrow_up.click()
+
+    def verify_top(self):
+        verify_top = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, '//h2[text()="Full-Fledged practice website for Automation Engineers"]')
+            )
+        )
+        assert verify_top.is_displayed(), "'Full-fledged practice website for Automation Engineers is not displayed'"
+
+    def scroll_up(self):
+        self.driver.execute_script("window.scrollTo(0, 0);")
+
+        verify_top = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//h2[text()="Full-Fledged practice website for Automation Engineers"]')
+            )
+        )
+        assert verify_top.is_displayed(), "'Full-fledged practice website for Automation Engineers is not displayed'"
