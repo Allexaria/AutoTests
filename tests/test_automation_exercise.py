@@ -1,5 +1,5 @@
-from automation_framework.pages.HeilHitler.automation_exercise_page import AutoExercise
-from automation_framework.pages.HeilHitler.ya_page import YaPage
+from pages.HeilHitler.automation_exercise_page import AutoExercise
+from pages.HeilHitler.ya_page import YaPage
 import allure
 import pytest
 
@@ -7,7 +7,7 @@ import pytest
 @allure.description("Opens main page, signs up, verifies account creation, and deletes it")
 
 
-def test_open_and_verify(driver):
+def test_open_and_verify(driver, random_email):
     ae = AutoExercise(driver)
 
     with allure.step("Opens main page"):
