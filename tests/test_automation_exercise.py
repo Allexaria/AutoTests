@@ -1,5 +1,5 @@
-from pages.HeilHitler.automation_exercise_page import AutoExercise
-from pages.HeilHitler.ya_page import YaPage
+from automation_framework.pages.HeilHitler.automation_exercise_page import AutoExercise
+from automation_framework.pages.HeilHitler.ya_page import YaPage
 import allure
 import pytest
 
@@ -489,6 +489,7 @@ def test_search_and_verify_cart_after_login(driver):
 
     with allure.step("Cart Verify"):
         ae.verify_panda()
+
 def test_add_review_on_product(driver):
     ae = AutoExercise(driver)
 

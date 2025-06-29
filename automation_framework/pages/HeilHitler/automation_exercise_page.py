@@ -373,7 +373,6 @@ class AutoExercise:
         )
         cart_button.click()
 
-
     def footer(self):
         footer = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "footer-bottom"))
@@ -437,7 +436,6 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, '//*[@class="total"]'))
         )
         assert total.is_displayed(), 'Total'
-
 
     def view_cart_button(self):
         view_cart_button = WebDriverWait(self.driver, 10).until(
