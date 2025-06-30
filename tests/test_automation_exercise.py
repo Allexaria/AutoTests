@@ -1,5 +1,6 @@
 from pages.HeilHitler.automation_exercise_page import AutoExercise
 from pages.HeilHitler.ya_page import YaPage
+from utils.user_generator import generate_random_user
 import allure
 import pytest
 
@@ -7,7 +8,7 @@ import pytest
 @allure.description("Opens main page, signs up, verifies account creation, and deletes it")
 
 
-def test_open_and_verify(driver, random_email):
+def test_open_and_verify(driver, random_email, random_username):
     ae = AutoExercise(driver)
 
     with allure.step("Opens main page"):
@@ -17,31 +18,44 @@ def test_open_and_verify(driver, random_email):
         ae.login_page_click_verify()
 
     with allure.step("Signup New User"):
-        ae.signup_new_user()
+        ae.signup_new_user(random_username, random_email)
 
-    with allure.step("Fill User INfo"):
-        ae.fill_user_info()
+    with allure.step("Fill User Info"):
+        ae.fill_user_info(random_username)
 
     with allure.step("Account Created"):
-        ae.account_created()
+        ae.account_created(random_username)
 
     with allure.step("Delete Account"):
         ae.delete_account()
 
-def test_login_with_correct_username(driver):
+def test_login_with_valid_credentials(driver):
     ae = AutoExercise(driver)
 
-    with allure.step("Opens main page"):
+    with allure.step("Open main page and navigate to signup"):
         ae.open_and_verify()
-
-    with allure.step("Login Page"):
         ae.login_page_click_verify()
 
-    with allure.step("verify"):
-        ae.login_verify()
+    with allure.step("Generate and register new user"):
+        user = generate_random_user()
+        ae.signup_new_user(user.name, user.email)
+        ae.fill_user_info(user)
+        ae.account_created(user.name)
 
-    with allure.step("Login"):
-        ae.fill_email_and_password()
+    with allure.step("Logout after registration"):
+        ae.logout()
+
+    with allure.step("Go to login page"):
+        ae.login_page_click_verify()
+
+    with allure.step("Login with the registered user"):
+        ae.fill_email_and_password(user.email, user.password)
+
+    with allure.step("Verify successful login"):
+        ae.verify_logged_in(user.name)
+
+    with allure.step("Delete account after test"):
+        ae.delete_account()
 
 def test_incorrect_login(driver):
     ae = AutoExercise(driver)
@@ -58,50 +72,72 @@ def test_incorrect_login(driver):
 def test_logout_user(driver):
     ae = AutoExercise(driver)
 
-    with allure.step("Open And Verify"):
+    with allure.step("Open main page and navigate to signup"):
         ae.open_and_verify()
-
-    with allure.step("Login Page Verify"):
         ae.login_page_click_verify()
 
-    with allure.step("Login Into Account Existing"):
-        ae.login_into_account_existing()
+    with allure.step("Generate and register new user"):
+        user = generate_random_user()
+        ae.signup_new_user(user.name, user.email)
+        ae.fill_user_info(user)
+        ae.account_created(user.name)
 
-    with allure.step("Login Button"):
-        ae.login_button()
+    with allure.step("Logout after registration"):
+        ae.logout()
+
+    with allure.step("Go to login page for second login"):
+        ae.login_page_click_verify()
+
+    with allure.step("Login with the registered user"):
+        ae.fill_email_and_password(user.email, user.password)
+
+    with allure.step("Verify user is logged in"):
+        ae.verify_logged_in(user.name)
+
+    with allure.step("Delete the user account"):
+        ae.delete_account()
 
 def test_register_with_existing_email(driver):
     ae = AutoExercise(driver)
 
-    with allure.step("Open And Verify"):
+    with allure.step("Open main page and navigate to signup"):
         ae.open_and_verify()
-
-    with allure.step("Login Page Verify"):
         ae.login_page_click_verify()
 
-    with allure.step("Fill Email And Name"):
-        ae.fill_email_and_name()
+    with allure.step("Generate and register new user"):
+        user = generate_random_user()
+        ae.signup_new_user(user.name, user.email)
+        ae.fill_user_info(user)
+        ae.account_created(user.name)
 
-    with allure.step("signup_button"):
+    with allure.step("Logout to enable new registration attempt"):
+        ae.logout()
+
+    with allure.step("Navigate to signup/login page again"):
+        ae.login_page_click_verify()
+
+    with allure.step("Attempt to register with existing user's email"):
+        ae.fill_email_and_name(user.email, user.name)
         ae.signup_button()
 
-    with allure.step("Error User"):
+    with allure.step("Verify error message about existing user"):
         ae.error_user()
+
+    with allure.step("Cleanup - delete the user account"):
+        ae.login_page_click_verify()
+        ae.fill_email_and_password(user.email, user.password)
+        ae.delete_account()
+
 
 def test_contact_us(driver):
     ae = AutoExercise(driver)
 
-    with allure.step("Open And Verify"):
-        ae.open_and_verify()
+    ae.open_and_verify()
+    ae.contact_us_button()
 
-    with allure.step("Login Page Verify"):
-        ae.login_page_click_verify()
+    user = generate_random_user()
 
-    with allure.step("Contact Us Button"):
-        ae.contact_us_button()
-
-    with allure.step("Contact Us Mail Button"):
-        ae.contact_us_mail()
+    ae.contact_us_mail(user)
 
 def test_cases(driver):
     ae = AutoExercise(driver)
@@ -218,13 +254,20 @@ def test_register_while_checkout(driver):
         ae.login_register_in_cart()
 
     with allure.step("Sign up"):
-        ae.signup_new_user()
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        ae.signup_new_user(name, email)
+
+        user = {
+            "name": name,
+            "email": email
+        }
 
     with allure.step("user info"):
-        ae.fill_user_info()
+        ae.fill_user_info(user)
 
     with allure.step("Account created"):
-        ae.account_created()
+        ae.account_created(name)
 
     with allure.step("View cart again"):
         ae.cart_button()
@@ -266,13 +309,20 @@ def test_order_register_before_checkout(driver):
         ae.login_page_click_verify()
 
     with allure.step("Sign up"):
-        ae.signup_new_user()
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        ae.signup_new_user(name, email)
+
+        user = {
+            "name": name,
+            "email": email
+        }
 
     with allure.step("User info"):
-        ae.fill_user_info()
+        ae.fill_user_info(user)
 
     with allure.step("Account created"):
-        ae.account_created()
+        ae.account_created(name)
 
     with allure.step("View product"):
         ae.products()
@@ -320,13 +370,20 @@ def test_login_before_checkout(driver):
         ae.login_page_click_verify()
 
     with allure.step("Sign up"):
-        ae.signup_new_user()
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        ae.signup_new_user(name, email)
+
+        user = {
+            "name": name,
+            "email": email
+        }
 
     with allure.step("User info"):
-        ae.fill_user_info()
+        ae.fill_user_info(user)
 
     with allure.step("Account created"):
-        ae.account_created()
+        ae.account_created(name)
 
     with allure.step("Logout"):
         ae.logout()

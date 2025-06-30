@@ -1,7 +1,6 @@
-import pytest
-import sys
-import os
+import pytest, random, string, sys, os
 from selenium import webdriver
+from utils.user_generator import generate_random_user
 from sqlalchemy.testing import fixture
 
 from pages.HeilHitler.automation_exercise_page import AutoExercise
@@ -20,8 +19,16 @@ def driver():
     yield driver
     driver.quit()
 
-
-
-@fixture
+@pytest.fixture
 def random_email():
-    return AutoExercise.generate_random_email()
+    username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+    domain = random.choice(['example.com', 'testmail.com', 'mail.ru', 'gmail.com', 'aboba.com'])
+    return f"{username}@{domain}"
+
+@pytest.fixture
+def random_username():
+    first_names = ['John', 'Mira', 'Anton', 'Luna', 'Markus', 'Elena', 'David', 'Sasha', 'Olga', 'Leo']
+    last_names = ['Steel', 'Donnelly', 'Cabaleron', 'Foster', 'Ivanov', 'Kuznetsova', 'Torres', 'White', 'Chen', 'Ford']
+    return f"{random.choice(first_names)} {random.choice(last_names)}"
+
+
