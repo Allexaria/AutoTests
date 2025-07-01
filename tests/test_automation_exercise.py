@@ -8,25 +8,35 @@ import pytest
 @allure.description("Opens main page, signs up, verifies account creation, and deletes it")
 
 
-def test_open_and_verify(driver, random_email, random_username):
+def test_open_and_verify(driver):
     ae = AutoExercise(driver)
 
-    with allure.step("Opens main page"):
+    with allure.step("Open main page"):
         ae.open_and_verify()
 
-    with allure.step("Login Page Verify"):
+    with allure.step("Navigate to Signup/Login page"):
         ae.login_page_click_verify()
 
-    with allure.step("Signup New User"):
-        ae.signup_new_user(random_username, random_email)
+    with allure.step("Generate user and sign up"):
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        password = "12345678Aa"
 
-    with allure.step("Fill User Info"):
-        ae.fill_user_info(random_username)
+        user = {
+            "name": name,
+            "email": email,
+            "password": password
+        }
 
-    with allure.step("Account Created"):
-        ae.account_created(random_username)
+        ae.signup_new_user(name, email)
 
-    with allure.step("Delete Account"):
+    with allure.step("Fill user info"):
+        ae.fill_user_info(user)
+
+    with allure.step("Verify account created"):
+        ae.account_created(name)
+
+    with allure.step("Delete account after test"):
         ae.delete_account()
 
 def test_login_with_valid_credentials(driver):
@@ -602,6 +612,9 @@ def test_add_review_on_product(driver):
 
     with allure.step("Products Verified"):
         ae.all_products_verify()
+
+    with allure.step("Go directly to product page if needed"):
+        ae.driver.get("https://automationexercise.com/products")
 
     with allure.step("View product"):
         ae.view_product_button()
