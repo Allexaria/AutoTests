@@ -37,10 +37,18 @@ def test_login_with_valid_credentials(driver):
         ae.login_page_click_verify()
 
     with allure.step("Generate and register new user"):
-        user = generate_random_user()
-        ae.signup_new_user(user.name, user.email)
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+
+        user = {
+            "name": name,
+            "email": email,
+            "password": "12345678Aa"
+        }
+
+        ae.signup_new_user(name, email)
         ae.fill_user_info(user)
-        ae.account_created(user.name)
+        ae.account_created(name)
 
     with allure.step("Logout after registration"):
         ae.logout()
@@ -49,10 +57,10 @@ def test_login_with_valid_credentials(driver):
         ae.login_page_click_verify()
 
     with allure.step("Login with the registered user"):
-        ae.fill_email_and_password(user.email, user.password)
+        ae.login_into_account_that_got_created(user)
 
     with allure.step("Verify successful login"):
-        ae.verify_logged_in(user.name)
+        ae.verify_logged_in(name)
 
     with allure.step("Delete account after test"):
         ae.delete_account()
@@ -77,10 +85,19 @@ def test_logout_user(driver):
         ae.login_page_click_verify()
 
     with allure.step("Generate and register new user"):
-        user = generate_random_user()
-        ae.signup_new_user(user.name, user.email)
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        password = "12345678Aa"
+
+        user = {
+            "name": name,
+            "email": email,
+            "password": password
+        }
+
+        ae.signup_new_user(name, email)
         ae.fill_user_info(user)
-        ae.account_created(user.name)
+        ae.account_created(name)
 
     with allure.step("Logout after registration"):
         ae.logout()
@@ -89,10 +106,10 @@ def test_logout_user(driver):
         ae.login_page_click_verify()
 
     with allure.step("Login with the registered user"):
-        ae.fill_email_and_password(user.email, user.password)
+        ae.login_into_account_that_got_created(user)
 
     with allure.step("Verify user is logged in"):
-        ae.verify_logged_in(user.name)
+        ae.verify_logged_in(user["name"])
 
     with allure.step("Delete the user account"):
         ae.delete_account()
@@ -105,10 +122,19 @@ def test_register_with_existing_email(driver):
         ae.login_page_click_verify()
 
     with allure.step("Generate and register new user"):
-        user = generate_random_user()
-        ae.signup_new_user(user.name, user.email)
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        password = "12345678Aa"
+
+        user = {
+            "name": name,
+            "email": email,
+            "password": password
+        }
+
+        ae.signup_new_user(name, email)
         ae.fill_user_info(user)
-        ae.account_created(user.name)
+        ae.account_created(name)
 
     with allure.step("Logout to enable new registration attempt"):
         ae.logout()
@@ -117,7 +143,7 @@ def test_register_with_existing_email(driver):
         ae.login_page_click_verify()
 
     with allure.step("Attempt to register with existing user's email"):
-        ae.fill_email_and_name(user.email, user.name)
+        ae.fill_email_and_name(user["email"], user["name"])
         ae.signup_button()
 
     with allure.step("Verify error message about existing user"):
@@ -125,9 +151,8 @@ def test_register_with_existing_email(driver):
 
     with allure.step("Cleanup - delete the user account"):
         ae.login_page_click_verify()
-        ae.fill_email_and_password(user.email, user.password)
+        ae.fill_email_and_password(user["email"], user["password"])
         ae.delete_account()
-
 
 def test_contact_us(driver):
     ae = AutoExercise(driver)
@@ -372,12 +397,13 @@ def test_login_before_checkout(driver):
     with allure.step("Sign up"):
         name = ae.generate_random_username()
         email = ae.generate_random_email()
-        ae.signup_new_user(name, email)
-
+        password = "12345678Aa"  # обязательно добавить пароль!
         user = {
             "name": name,
-            "email": email
+            "email": email,
+            "password": password
         }
+        ae.signup_new_user(name, email)
 
     with allure.step("User info"):
         ae.fill_user_info(user)
@@ -392,10 +418,7 @@ def test_login_before_checkout(driver):
         ae.login_page_click_verify()
 
     with allure.step("Login into"):
-        ae.login_into_account_that_got_created()
-
-    with allure.step("Login button"):
-        ae.login_button()
+        ae.login_into_account_that_got_created(user)
 
     with allure.step("Add to cart"):
         ae.add_to_cart_from_page()
@@ -535,16 +558,37 @@ def test_search_and_verify_cart_after_login(driver):
     with allure.step("Login"):
         ae.login_page_click_verify()
 
+    with allure.step("Sign up"):
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        password = "12345678Aa"
+
+        user = {
+            "name": name,
+            "email": email,
+            "password": password
+        }
+        ae.signup_new_user(name, email)
+
+    with allure.step("User info"):
+        ae.fill_user_info(user)
+
+    with allure.step("Account created"):
+        ae.account_created(name)
+
+    with allure.step("Logout"):
+        ae.logout()
+
+    with allure.step("Login Page again"):
+        ae.login_page_click_verify()
+
     with allure.step("Login into account"):
-        ae.login_into_account_existing()
+        ae.login_into_account_that_got_created(user)
 
-    with allure.step("login button"):
-        ae.login_button()
-
-    with allure.step("Again cart"):
+    with allure.step("Cart again"):
         ae.cart_button()
 
-    with allure.step("Cart Verify"):
+    with allure.step("Cart Verify again"):
         ae.verify_panda()
 
 def test_add_review_on_product(driver):
@@ -595,14 +639,18 @@ def test_verify_address_details_in_checkout_page(driver):
     with allure.step("Sign up"):
         ae.login_page_click_verify()
 
-    with allure.step("Create user"):
-        ae.signup_new_user()
-
-    with allure.step("User info"):
-        ae.fill_user_info()
-
-    with allure.step("Account verify"):
-        ae.account_created()
+    with allure.step("Generate and create user"):
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        password = "12345678Aa"
+        user = {
+            "name": name,
+            "email": email,
+            "password": password
+        }
+        ae.signup_new_user(name, email)
+        ae.fill_user_info(user)
+        ae.account_created(name)
 
     with allure.step("Add to cart"):
         ae.add_to_cart_from_page()
@@ -622,16 +670,17 @@ def test_verify_address_details_in_checkout_page(driver):
     with allure.step("Delete account"):
         ae.delete_account()
 
+
 def test_download_invoice(driver):
     ae = AutoExercise(driver)
 
     with allure.step("Open and Verify"):
         ae.open_and_verify()
 
-    with allure.step("add product"):
+    with allure.step("Add product"):
         ae.add_to_cart_from_page()
 
-    with allure.step("cart button"):
+    with allure.step("Cart button"):
         ae.view_cart_button()
 
     with allure.step("Verify cart"):
@@ -643,16 +692,20 @@ def test_download_invoice(driver):
     with allure.step("Register-login"):
         ae.login_register_in_cart()
 
-    with allure.step("Sign-up"):
-        ae.signup_new_user()
+    with allure.step("Generate and sign up user"):
+        name = ae.generate_random_username()
+        email = ae.generate_random_email()
+        password = "12345678Aa"
+        user = {
+            "name": name,
+            "email": email,
+            "password": password
+        }
+        ae.signup_new_user(name, email)
+        ae.fill_user_info(user)
+        ae.account_created(name)
 
-    with allure.step("User info"):
-        ae.fill_user_info()
-
-    with allure.step("Account verify"):
-        ae.account_created()
-
-    with allure.step("cart"):
+    with allure.step("Cart"):
         ae.cart_button()
 
     with allure.step("Proceed to checkout again"):
@@ -667,10 +720,10 @@ def test_download_invoice(driver):
     with allure.step("Enter description"):
         ae.comment()
 
-    with allure.step("place order"):
+    with allure.step("Place order"):
         ae.place_order()
 
-    with allure.step("card details"):
+    with allure.step("Card details"):
         ae.card_details()
 
     with allure.step("Pay"):
@@ -684,6 +737,7 @@ def test_download_invoice(driver):
 
     with allure.step("Delete account"):
         ae.delete_account()
+
 
 def test_scroll_up_using_arrow(driver):
     ae = AutoExercise(driver)
