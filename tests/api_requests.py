@@ -93,11 +93,15 @@ def test_put_to_all_brands_list():
     with allure.step("Verify internal responseCode is 405 (method not allowed)"):
         assert data.get("responseCode") == 405, f"Expect responseCode 405, got {data.get('responseCode')}"
 
-    with allure.step("Check data structure for 'brands' key"):
-        assert "brands" in data, "Key 'brands' not found in response"
-        assert isinstance(data["brands"], list), "'brands' must be a list"
+    with allure.step("Check error structure for expected keys"):
+        assert "responseCode" in data, "Missing 'responseCode' in response"
+        assert "message" in data, "Missing 'message' in response"
+        assert data["responseCode"] == 405, f"Expected 405, got {data['responseCode']}"
+        assert data[
+                   "message"] == "This request method is not supported.", f"Unexpected error message: {data['message']}"
 
-def test_put_to_all_brands_list():
+
+def test_put_to_all_brands_():
     client = ApiClient()
 
     with allure.step("PUT request on /brandslist"):
