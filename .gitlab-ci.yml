@@ -1,0 +1,25 @@
+stages:
+  - build
+  - test
+
+variables:
+  IMAGE_NAME: $CI_REGISTRY_IMAGE/test-runner
+
+build_image:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+
+run_tests:
+  stage: test
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker run --rm $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
