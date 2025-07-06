@@ -1,7 +1,7 @@
 import allure
 import pytest
 
-from api_requests_framework import ApiClient
+from api_request.api_tests.clients import ApiClient
 
 def test_api_product_list():
     client = ApiClient()

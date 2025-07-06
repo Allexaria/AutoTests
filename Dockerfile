@@ -10,7 +10,7 @@ ENV PYTHONPATH=/app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование исходников и тестов
-COPY . /app
+COPY . .
 
 # Команда по умолчанию
 CMD ["pytest"]

@@ -1,5 +1,4 @@
 from pages.HeilHitler.automation_exercise_page import AutoExercise
-from pages.HeilHitler.ya_page import YaPage
 from utils.user_generator import generate_random_user
 import allure
 import pytest
