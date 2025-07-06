@@ -1,9 +1,12 @@
 import sys
 import os
 
-root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+
+# Абсолютный путь до папки automation_framework
+automation_framework_path = r"C:\Users\Twelve\PycharmProjects\automation_framework"
+
+if automation_framework_path not in sys.path:
+    sys.path.insert(0, automation_framework_path)
 
 import pytest
 import random
