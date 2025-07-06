@@ -19,7 +19,10 @@ build_image:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-
+  rules:
+    # Запускается только при создании или обновлении merge request
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
 
 run_tests:
   stage: test
@@ -30,3 +33,7 @@ run_tests:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
     - docker run --rm -e PYTHONPATH=/app $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  rules:
+    # Запускается только при создании или обновлении merge request
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
