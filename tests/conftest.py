@@ -8,9 +8,10 @@ from utils.user_generator import generate_random_user
 from sqlalchemy.testing import fixture
 
 # Абсолютный путь к папке automation_framework
-automation_framework_path = os.path.abspath(r"C:\Users\Twelve\PycharmProjects\automation_framework")
+automation_framework_path = "/app/automation_framework"
 if automation_framework_path not in sys.path:
     sys.path.insert(0, automation_framework_path)
+
 
 from pages.HeilHitler.automation_exercise_page import AutoExercise
 

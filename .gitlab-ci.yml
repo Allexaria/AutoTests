@@ -4,6 +4,7 @@ stages:
 
 variables:
   IMAGE_NAME: $CI_REGISTRY_IMAGE/test-runner
+  AUTOMATION_FRAMEWORK_PATH: "/app/automation_framework"
 
 build_image:
   stage: build
