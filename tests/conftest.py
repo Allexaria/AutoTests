@@ -1,15 +1,5 @@
 import sys
 import os
-
-
-import sys
-import os
-
-# Абсолютный путь к папке automation_framework/pages
-automation_framework_path = os.path.abspath(r"C:\Users\Twelve\PycharmProjects\automation_framework")
-if automation_framework_path not in sys.path:
-    sys.path.insert(0, automation_framework_path)
-
 import pytest
 import random
 import string
@@ -17,11 +7,12 @@ from selenium import webdriver
 from utils.user_generator import generate_random_user
 from sqlalchemy.testing import fixture
 
-from pages.HeilHitler.automation_exercise_page import AutoExercise
+# Абсолютный путь к папке automation_framework
+automation_framework_path = os.path.abspath(r"C:\Users\Twelve\PycharmProjects\automation_framework")
+if automation_framework_path not in sys.path:
+    sys.path.insert(0, automation_framework_path)
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-automation_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'automation_framework'))
-sys.path.append(automation_path)
+from pages.HeilHitler.automation_exercise_page import AutoExercise
 
 
 @pytest.fixture
