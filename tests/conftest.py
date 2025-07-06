@@ -1,14 +1,22 @@
-import pytest, random, string, sys, os
+import sys
+import os
+
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
+
+import pytest
+import random
+import string
 from selenium import webdriver
 from utils.user_generator import generate_random_user
 from sqlalchemy.testing import fixture
 
-from pages.HeilHitler.automation_exercise_page import AutoExercise
+from pages.AutomExercise.HeilHitler.automation_exercise_page import AutoExercise
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 automation_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'automation_framework'))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'automation_framework')))
-
+sys.path.append(automation_path)
 
 
 @pytest.fixture
@@ -19,16 +27,16 @@ def driver():
     yield driver
     driver.quit()
 
+
 @pytest.fixture
 def random_email():
     username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
     domain = random.choice(['example.com', 'testmail.com', 'mail.ru', 'gmail.com', 'aboba.com'])
     return f"{username}@{domain}"
 
+
 @pytest.fixture
 def random_username():
     first_names = ['John', 'Mira', 'Anton', 'Luna', 'Markus', 'Elena', 'David', 'Sasha', 'Olga', 'Leo']
     last_names = ['Steel', 'Donnelly', 'Cabaleron', 'Foster', 'Ivanov', 'Kuznetsova', 'Torres', 'White', 'Chen', 'Ford']
     return f"{random.choice(first_names)} {random.choice(last_names)}"
-
-
