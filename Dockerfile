@@ -1,12 +1,15 @@
 # Базовый образ
 FROM python:3.11-slim
 
-# Установка зависимостей
+# Рабочая директория
 WORKDIR /app
+
+# Установка зависимостей
 COPY requirements.txt .
+ENV PYTHONPATH=/app
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy code and tests
+# Копирование исходников и тестов
 COPY . .
 
 # Команда по умолчанию
