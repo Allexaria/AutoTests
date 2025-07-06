@@ -15,7 +15,6 @@ if automation_framework_path not in sys.path:
 
 from pages.HeilHitler.automation_exercise_page import AutoExercise
 
-
 @pytest.fixture
 def driver():
     options = webdriver.ChromeOptions()
