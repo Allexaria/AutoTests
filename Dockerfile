@@ -1,10 +1,17 @@
-FROM python:3.11-slim
+FROM alpine:latest
 
-WORKDIR /app
+RUN apk add --no-cache git curl jq openssh
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Аргументы/переменные
+ENV GITLAB_GROUP_PATH=barbariki245
+ENV GITLAB_API_TOKEN=glpat-KY81g4JLGxgjs1wr1CR6
+ENV GITLAB_API_URL=https://gitlab.com/api/v4
 
-COPY . .
+WORKDIR /projects
 
-CMD ["pytest"]
+# Клонирование всех репозиториев группы
+RUN curl --silent --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" "$GITLAB_API_URL/groups/$GITLAB_GROUP_PATH/projects?per_page=100" \
+    | jq -r '.[].http_url_to_repo' \
+    | while read repo; do \
+        git clone "$repo"; \
+    done
