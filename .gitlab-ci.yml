@@ -18,10 +18,7 @@ build_image:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-    - ls -l /app
-    - ls -l /app/pages
-    - ls -l /app/utils
-    - pytest
+
 
 run_tests:
   stage: test
