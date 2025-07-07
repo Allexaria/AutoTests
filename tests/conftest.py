@@ -7,13 +7,21 @@ from selenium import webdriver
 from utils.user_generator import generate_random_user
 from sqlalchemy.testing import fixture
 
-# Абсолютный путь к папке automation_framework
-automation_framework_path = "/app/automation_framework"
-if automation_framework_path not in sys.path:
-    sys.path.insert(0, automation_framework_path)
 
+current_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+automation_framework_path = os.path.join(project_root, 'automation_framework')
 
+for p in [project_root, automation_framework_path]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+print("sys.path:", sys.path)
+
+from api_request.api_requests_framework import ApiClient
 from pages.HeilHitler.automation_exercise_page import AutoExercise
+
+
 
 @pytest.fixture
 def driver():
