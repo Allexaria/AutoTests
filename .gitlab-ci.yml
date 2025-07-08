@@ -20,9 +20,6 @@ build_image:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: always
 
 run_tests:
   stage: test
@@ -36,9 +33,6 @@ run_tests:
   artifacts:
     paths:
       - allure-results
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: always
 
 report:
   stage: report
@@ -53,6 +47,7 @@ report:
   artifacts:
     paths:
       - allure-report
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: always
+
+
+
+
