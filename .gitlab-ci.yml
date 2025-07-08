@@ -23,15 +23,16 @@ build_image:
 
 run_tests:
   stage: test
-  image: python:3.10-slim
+  image: docker:24
+  services:
+    - docker:24-dind
   script:
-    - apt-get update && apt-get install -y curl unzip
-    - pip install --no-cache-dir pytest allure-pytest
-    - pytest tests --alluredir=allure-results
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker run --rm -e PYTHONPATH=/app -v $CI_PROJECT_DIR/allure-results:/app/allure-results $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
   artifacts:
     paths:
       - allure-results
-
 
 report:
   stage: report
