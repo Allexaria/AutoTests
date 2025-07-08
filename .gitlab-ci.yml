@@ -26,13 +26,14 @@ run_tests:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
     - docker run --rm \
-        -v $CI_PROJECT_DIR/allure-results:/projects/allure-results \
-        $IMAGE_NAME:$CI_COMMIT_SHORT_SHA \
+        -v "$CI_PROJECT_DIR/allure-results:/projects/allure-results" \
+        "$IMAGE_NAME:$CI_COMMIT_SHORT_SHA" \
         sh -c "pytest --alluredir=/projects/allure-results"
   artifacts:
     paths:
       - allure-results
     expire_in: 1 week
+
 
 allure_report:
   stage: report
