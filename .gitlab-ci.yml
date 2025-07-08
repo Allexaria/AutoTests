@@ -36,7 +36,7 @@ run_tests:
 
 report:
   stage: report
-  image: openjdk:17
+  image: openjdk:17-slim
   script:
     - apt-get update && apt-get install -y unzip curl
     - curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.zip
@@ -47,6 +47,7 @@ report:
   artifacts:
     paths:
       - allure-report
+
 
 
 
