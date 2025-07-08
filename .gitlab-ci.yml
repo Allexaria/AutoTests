@@ -29,6 +29,7 @@ run_tests:
         -v "$CI_PROJECT_DIR/allure-results:/projects/allure-results" \
         "$IMAGE_NAME:$CI_COMMIT_SHORT_SHA" \
         sh -c "pytest --alluredir=/projects/allure-results"
+
   artifacts:
     paths:
       - allure-results
