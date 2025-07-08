@@ -9,6 +9,7 @@ ENV GITLAB_API_TOKEN=glpat-KY81g4JLGxgjs1wr1CR6
 ENV GITLAB_API_URL=https://gitlab.com/api/v4
 
 WORKDIR /projects
+ENV PYTHONPATH="/projects:${PYTHONPATH}"
 
 COPY requirements.txt /projects/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
