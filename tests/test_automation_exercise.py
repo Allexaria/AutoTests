@@ -1,4 +1,4 @@
-from pages.HeilHitler.automation_exercise_page import AutoExercise
+from pages.UI_Framework.automation_exercise_page import AutoExercise
 from utils.user_generator import generate_random_user
 import allure
 import pytest
