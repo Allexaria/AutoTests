@@ -16,4 +16,6 @@ run_pytest:
     expire_in: 1 week
     paths:
       - allure-results
-# faefefaefsef
+test_runner:
+  script:
+    - echo "Я жив!"
