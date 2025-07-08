@@ -24,25 +24,17 @@ run_tests:
   services:
     - docker:24-dind
   before_script:
-    - mkdir -p ~/.ssh
-    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-    - cat ~/.ssh/id_ed25519
-    - ssh-keygen -l -f ~/.ssh/id_ed25519 || echo "Ключ невалидный"
-    - chmod 600 ~/.ssh/id_ed25519
-    - eval $(ssh-agent -s)
-    - ssh-add ~/.ssh/id_ed25519
     - git clone git@gitlab.com:barbariki245/automation.framework.git
     - export PYTHONPATH="$PYTHONPATH:$(pwd)/automation_framework"
   script:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    # Создаём папку на хосте для артефактов
     - mkdir -p $ALLURE_RESULTS_DIR
+    # Запускаем контейнер, монтируем папку с результатами
     - docker run --rm -v $CI_PROJECT_DIR/$ALLURE_RESULTS_DIR:/app/$ALLURE_RESULTS_DIR $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
   artifacts:
     paths:
       - allure-results
-
 
 report:
   stage: report
@@ -57,3 +49,8 @@ report:
   artifacts:
     paths:
       - allure-report
+
+
+
+
+
