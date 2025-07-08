@@ -25,4 +25,6 @@ RUN curl --silent --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
 RUN curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.zip && \
     unzip allure.zip -d /opt/ && \
     ln -s /opt/allure-2.34.0/bin/allure /usr/bin/allure && \
-    rm allure.zip
+    rm allure.zip \
+
+CMD ["pytest", "tests", "--alluredir=allure-results"]
