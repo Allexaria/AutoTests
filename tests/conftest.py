@@ -18,7 +18,11 @@ for p in [project_root, automation_framework_path]:
 
 print("sys.path:", sys.path)
 
-from api_request.api_requests_framework import ApiClient
+
+# Добавляем путь к проекту automation_framework
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../automation_framework')))
+
+from api_requests_framework import ApiClient
 from pages.HeilHitler.automation_exercise_page import AutoExercise
 
 
