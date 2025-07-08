@@ -1,13 +1,15 @@
-FROM alpine:latest
+FROM python:3.10-alpine
 
-RUN apk add --no-cache git curl jq openssh
-
+RUN apk add --no-cache git curl jq openssh unzip bash
 # Аргументы/переменные
 ENV GITLAB_GROUP_PATH=barbariki245
 ENV GITLAB_API_TOKEN=glpat-KY81g4JLGxgjs1wr1CR6
 ENV GITLAB_API_URL=https://gitlab.com/api/v4
 
 WORKDIR /projects
+
+# Установка pytest и allure-pytest
+RUN pip install --no-cache-dir pytest allure-pytest
 
 # Клонирование всех репозиториев группы
 RUN curl --silent --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
