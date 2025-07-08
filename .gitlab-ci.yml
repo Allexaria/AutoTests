@@ -24,7 +24,7 @@ run_tests:
   services:
     - docker:24-dind
   before_script:
-    - git clone https://gitlab.com/barbariki245/automation_framework.git
+    - git clone git@gitlab.com:barbariki245/automation.framework.git
     - export PYTHONPATH="$PYTHONPATH:$(pwd)/automation_framework"
   script:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
