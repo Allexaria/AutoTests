@@ -28,4 +28,4 @@ RUN curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/d
     rm allure.zip
 
 # запуск тестов при запуске контейнера
-CMD ["pytest", "tests", "--alluredir=allure-results"]
+CMD ["pytest", "test-selenium/tests", "--alluredir=allure-results"]
