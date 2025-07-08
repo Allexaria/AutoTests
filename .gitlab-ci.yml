@@ -23,6 +23,9 @@ run_tests:
   image: docker:24
   services:
     - docker:24-dind
+  before_script:
+    - git clone https://gitlab.com/barbariki245/automation_framework.git
+    - export PYTHONPATH="$PYTHONPATH:$(pwd)/automation_framework"
   script:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     # Создаём папку на хосте для артефактов
