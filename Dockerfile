@@ -16,3 +16,9 @@ RUN curl --silent --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
     | while read repo; do \
         git clone "https://oauth2:${GITLAB_API_TOKEN}@gitlab.com/${repo}.git"; \
       done
+
+# Установка Allure CLI 2.34.0
+RUN curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.zip && \
+    unzip allure.zip -d /opt/ && \
+    ln -s /opt/allure-2.34.0/bin/allure /usr/bin/allure && \
+    rm allure.zip
