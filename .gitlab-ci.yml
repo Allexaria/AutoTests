@@ -1,12 +1,10 @@
 stages:
   - build
   - test
-  - report
 
 variables:
   IMAGE_NAME: $CI_REGISTRY_IMAGE/test-runner
-  ALLURE_RESULTS_DIR: allure-results
-  ALLURE_REPORT_DIR: allure-report
+  AUTOMATION_FRAMEWORK_PATH: "/app/automation_framework"
 
 build_image:
   stage: build
@@ -14,9 +12,16 @@ build_image:
   services:
     - docker:24-dind
   script:
+    - echo "Список файлов в рабочей директории:"
+    - ls -l
+    - echo "Проверяем Dockerfile:"
+    - ls -l Dockerfile || echo "Dockerfile не найден"
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
 
 run_tests:
   stage: test
@@ -25,27 +30,8 @@ run_tests:
     - docker:24-dind
   script:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    # Создаём папку на хосте для артефактов
-    - mkdir -p $ALLURE_RESULTS_DIR
-    # Запускаем контейнер, монтируем папку с результатами
-    - docker run --rm -v $CI_PROJECT_DIR/$ALLURE_RESULTS_DIR:/app/$ALLURE_RESULTS_DIR $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-  artifacts:
-    paths:
-      - allure-results
-
-report:
-  stage: report
-  image: openjdk:17-slim
-  script:
-    - apt-get update && apt-get install -y unzip curl
-    - curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.zip
-    - unzip allure.zip -d /opt/
-    - ln -s /opt/allure-2.34.0/bin/allure /usr/bin/allure
-    - allure generate $ALLURE_RESULTS_DIR --clean -o $ALLURE_REPORT_DIR
-    - echo "Отчёт Allure успешно сгенерирован."
-  artifacts:
-    paths:
-      - allure-report
-
-
-
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker run --rm -e PYTHONPATH=/app $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
