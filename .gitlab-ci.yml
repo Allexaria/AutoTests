@@ -5,7 +5,6 @@ stages:
 
 variables:
   IMAGE_NAME: $CI_REGISTRY_IMAGE/test-runner
-  AUTOMATION_FRAMEWORK_PATH: "/projects"
 
 build_image:
   stage: build
@@ -25,17 +24,29 @@ run_tests:
   script:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+
+    - git clone https://gitlab.com/barbariki245/automation.framework.git
+    - git clone https://gitlab.com/barbariki245/api-requests.git
+
+
+    - ls -la
+    - ls automation.framework
+    - ls api_requests
+
+
     - |
-      
       docker run --rm \
         -v "$CI_PROJECT_DIR/allure-results:/projects/allure-results" \
+        -v "$CI_PROJECT_DIR/automation.framework:/projects/automation.framework" \
+        -v "$CI_PROJECT_DIR/api_requests:/projects/api_requests" \
+        -v "$CI_PROJECT_DIR:/projects/tests" \
+        -e PYTHONPATH="/projects/automation.framework:/projects/api_requests:/projects/tests" \
         "$IMAGE_NAME:$CI_COMMIT_SHORT_SHA" \
         sh -c "pytest --alluredir=/projects/allure-results"
   artifacts:
     paths:
       - allure-results
     expire_in: 1 week
-
 
 allure_report:
   stage: report
