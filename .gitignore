@@ -1,0 +1,22 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Python cache/build
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Test artifacts
+allure-results/
+allure-report/
+*.log
+
+# IDE/system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
