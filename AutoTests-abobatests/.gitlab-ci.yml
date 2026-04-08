@@ -1,0 +1,33 @@
+stages:
+  - quality
+  - test
+
+quality_checks:
+  stage: quality
+  image: python:3.10
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install -r requirements.txt
+  script:
+    - ruff check ../
+    - black --check ../
+    - mypy tests/conftest.py
+
+run_pytest:
+  stage: test
+  image: python:3.10
+  only:
+    - abobatests
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install -r requirements.txt
+  script:
+    - pytest tests --alluredir=allure-results
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - allure-results
+test_runner:
+  script:
+    - echo "Я жив!"
