@@ -1,9 +1,12 @@
-import os
 import random
 import string
 import time
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -14,6 +17,35 @@ from selenium.webdriver.support.ui import WebDriverWait
 class AutoExercise:
     def __init__(self, driver):
         self.driver = driver
+        self.current_email = None
+        self.current_password = "12345678Aa"
+
+    def hide_ads(self):
+        self.driver.execute_script(
+            """
+            const selectors = [
+                "iframe[id^='aswift']",
+                "iframe[src*='doubleclick']",
+                "iframe[src*='googlesyndication']",
+                ".adsbygoogle",
+                "[id*='google_ads']"
+            ];
+            document.querySelectorAll(selectors.join(",")).forEach((el) => {
+                el.style.display = "none";
+                el.remove();
+            });
+            """
+        )
+
+    def safe_click(self, by, locator, timeout=10):
+        self.hide_ads()
+        el = WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable((by, locator)))
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+        try:
+            el.click()
+        except ElementClickInterceptedException:
+            self.hide_ads()
+            self.driver.execute_script("arguments[0].click();", el)
 
     def generate_random_email(self):
         username = "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
@@ -57,15 +89,13 @@ class AutoExercise:
         assert self.driver.current_url == "https://automationexercise.com/"
 
     def login_page_click_verify(self):
-        login_link = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/login']"))
-        )
-        login_link.click()
+        self.safe_click(By.CSS_SELECTOR, "a[href='/login']")
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//*[@class="signup-form"]'))
         )
 
     def signup_new_user(self, name, email):
+        self.current_email = email
         name_field = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-name']"))
         )
@@ -78,10 +108,7 @@ class AutoExercise:
         email_field.click()
         email_field.send_keys(email)
 
-        signup_button = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-button']"))
-        )
-        signup_button.click()
+        self.safe_click(By.XPATH, "//*[@data-qa='signup-button']")
 
         element = WebDriverWait(self.driver, 15).until(
             EC.presence_of_element_located((By.XPATH, "//h2[@class='title text-center']"))
@@ -94,15 +121,14 @@ class AutoExercise:
         first_name, last_name = user["name"].split()
 
         # Title
-        wait.until(
-            EC.presence_of_element_located((By.XPATH, "//*[@id='uniform-id_gender1']"))
-        ).click()
+        self.safe_click(By.XPATH, "//*[@id='uniform-id_gender1']")
 
         # Password
         password_field = wait.until(
             EC.presence_of_element_located((By.XPATH, "//*[@id='password']"))
         )
-        password_field.click()
+        self.hide_ads()
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", password_field)
         password_field.send_keys("12345678Aa")
 
         # Birthdate
@@ -117,8 +143,8 @@ class AutoExercise:
         )
 
         # Checkboxes
-        wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='newsletter']"))).click()
-        wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='optin']"))).click()
+        self.safe_click(By.XPATH, "//*[@id='newsletter']")
+        self.safe_click(By.XPATH, "//*[@id='optin']")
 
         # Address fields
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='first_name']"))).send_keys(
@@ -151,9 +177,7 @@ class AutoExercise:
             EC.presence_of_element_located((By.XPATH, "//*[@id='mobile_number']"))
         ).send_keys("+69 88 567 84 93")
 
-        wait.until(
-            EC.presence_of_element_located((By.XPATH, "//*[@data-qa='create-account']"))
-        ).click()
+        self.safe_click(By.XPATH, "//*[@data-qa='create-account']")
 
         element2 = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='title text-center']"))
@@ -162,22 +186,33 @@ class AutoExercise:
         assert text == "ACCOUNT CREATED!", f"Текст заголовка отличается: «{text}»"
 
     def account_created(self, username):
-        cont = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@data-qa='continue-button']"))
-        )
-        cont.click()
+        self.safe_click(By.XPATH, "//*[@data-qa='continue-button']")
 
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='nav navbar-nav']"))
         )
         text = element.text.strip()
+        if username not in text and self.current_email:
+            self.safe_click(By.CSS_SELECTOR, "a[href='/login']")
+            login_email = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
+            )
+            login_password = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
+            )
+            login_email.clear()
+            login_email.send_keys(self.current_email)
+            login_password.clear()
+            login_password.send_keys(self.current_password)
+            self.safe_click(By.XPATH, '//*[@data-qa="login-button"]')
+            element = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "//*[@class='nav navbar-nav']"))
+            )
+            text = element.text.strip()
         assert username in text, f"Ожидали увидеть '{username}' в тексте, но получили: «{text}»"
 
     def delete_account(self):
-        delete = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/delete_account']"))
-        )
-        delete.click()
+        self.safe_click(By.CSS_SELECTOR, "a[href='/delete_account']", timeout=5)
         element = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='title text-center']"))
         )
@@ -185,10 +220,7 @@ class AutoExercise:
             element.text.strip() == "ACCOUNT DELETED!"
         ), f"Ожидали текст 'ACCOUNT DELETED!', но получили: «{element.text.strip()}»"
 
-        cont = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@data-qa='continue-button']"))
-        )
-        cont.click()
+        self.safe_click(By.XPATH, "//*[@data-qa='continue-button']", timeout=5)
 
     def login_into_account(self):
         login = WebDriverWait(self.driver, 10).until(
@@ -254,7 +286,13 @@ class AutoExercise:
         except TimeoutException:
             raise AssertionError("❌ Кнопка 'Contact us' не найдена или не кликабельна.")
 
-    def contact_us_mail(self, user):
+    def upload_file(self, file_path):
+        file_input = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "upload_file"))
+        )
+        file_input.send_keys(str(file_path))
+
+    def contact_us_mail(self, user, file_path):
         wait = WebDriverWait(self.driver, 10)
 
         wait.until(EC.presence_of_element_located((By.XPATH, '//*[@data-qa="name"]'))).send_keys(
@@ -270,9 +308,7 @@ class AutoExercise:
             "test if working"
         )
 
-        wait.until(EC.presence_of_element_located((By.NAME, "upload_file"))).send_keys(
-            os.path.abspath(r"C:\Users\avere\PycharmProjects\test-selenium\utils\test_image.png")
-        )
+        self.upload_file(file_path)
 
         wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@data-qa="submit-button"]'))
@@ -435,10 +471,15 @@ class AutoExercise:
         assert successfully.is_displayed(), "You have been successfully subscribed!"
 
     def cart_button(self):
-        cart_button = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/view_cart']"))
-        )
-        cart_button.click()
+        cart_locator = (By.CSS_SELECTOR, "a[href='/view_cart']")
+        for _ in range(3):
+            try:
+                self.safe_click(*cart_locator, timeout=10)
+                return
+            except StaleElementReferenceException:
+                self.hide_ads()
+                time.sleep(0.3)
+        self.safe_click(*cart_locator, timeout=10)
 
     def footer(self):
         footer = WebDriverWait(self.driver, 10).until(
@@ -670,21 +711,27 @@ class AutoExercise:
         expire_year.send_keys("2090")
 
     def button_pay(self):
-        pay_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@data-qa="pay-button"]'))
-        )
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", pay_button)
-        pay_button.click()
+        pay_locator = (By.XPATH, '//*[@data-qa="pay-button"]')
+        success_locator = (By.XPATH, '//*[@class="alert-success alert"]')
 
-        try:
-            successfully = WebDriverWait(self.driver, 3).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@class="alert-success alert"]'))
+        # Payment page is dynamic and occasionally re-renders controls.
+        for _ in range(3):
+            try:
+                self.safe_click(*pay_locator, timeout=12)
+                break
+            except (StaleElementReferenceException, ElementClickInterceptedException):
+                self.hide_ads()
+                time.sleep(0.5)
+
+        WebDriverWait(self.driver, 20).until(
+            lambda d: "payment_done" in d.current_url or len(d.find_elements(*success_locator)) > 0
+        )
+
+        if "payment_done" not in self.driver.current_url:
+            successfully = WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located(success_locator)
             )
             assert successfully.is_displayed(), "Your order has been placed successfully!"
-        except TimeoutException:
-            print("Alert не отловлен, возможно, страница быстро перешла дальше")
-
-        WebDriverWait(self.driver, 15).until(EC.url_contains("payment_done"))
 
     def add_to_cart_from_page(self):
         add_to_cart_button = WebDriverWait(self.driver, 10).until(

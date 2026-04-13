@@ -1,10 +1,15 @@
 import allure
-from pages.UI_Framework.automation_exercise_page import AutoExercise
-from utils.user_generator import generate_random_user
+import pytest
+
+from qa_project.framework.core.user_generator import generate_random_user
+from qa_project.framework.ui.automation_exercise_page import AutoExercise
+
+pytestmark = [pytest.mark.ui]
 
 
 @allure.title("Test: Register New User And Delete Account")
 @allure.description("Opens main page, signs up, verifies account creation, and deletes it")
+@pytest.mark.smoke
 def test_open_and_verify(driver):
     ae = AutoExercise(driver)
 
@@ -33,6 +38,7 @@ def test_open_and_verify(driver):
         ae.delete_account()
 
 
+@pytest.mark.smoke
 def test_login_with_valid_credentials(driver):
     ae = AutoExercise(driver)
 
@@ -66,6 +72,7 @@ def test_login_with_valid_credentials(driver):
         ae.delete_account()
 
 
+@pytest.mark.smoke
 def test_incorrect_login(driver):
     ae = AutoExercise(driver)
 
@@ -79,6 +86,7 @@ def test_incorrect_login(driver):
         ae.login_into_account()
 
 
+@pytest.mark.smoke
 def test_logout_user(driver):
     ae = AutoExercise(driver)
 
@@ -113,6 +121,7 @@ def test_logout_user(driver):
         ae.delete_account()
 
 
+@pytest.mark.regression
 def test_register_with_existing_email(driver):
     ae = AutoExercise(driver)
 
@@ -150,7 +159,8 @@ def test_register_with_existing_email(driver):
         ae.delete_account()
 
 
-def test_contact_us(driver):
+@pytest.mark.regression
+def test_contact_us(driver, test_file):
     ae = AutoExercise(driver)
 
     ae.open_and_verify()
@@ -158,9 +168,10 @@ def test_contact_us(driver):
 
     user = generate_random_user()
 
-    ae.contact_us_mail(user)
+    ae.contact_us_mail(user, test_file)
 
 
+@pytest.mark.regression
 def test_cases(driver):
     ae = AutoExercise(driver)
 
@@ -171,6 +182,7 @@ def test_cases(driver):
         ae.cases_test()
 
 
+@pytest.mark.smoke
 def test_verify_all_products(driver):
     ae = AutoExercise(driver)
 
@@ -184,6 +196,7 @@ def test_verify_all_products(driver):
         ae.details()
 
 
+@pytest.mark.smoke
 def test_search_products(driver):
     ae = AutoExercise(driver)
 
@@ -197,6 +210,7 @@ def test_search_products(driver):
         ae.search_products()
 
 
+@pytest.mark.regression
 def test_subscriptions(driver):
     ae = AutoExercise(driver)
 
@@ -207,6 +221,7 @@ def test_subscriptions(driver):
         ae.scroll_to_footer()
 
 
+@pytest.mark.regression
 def test_cart_subscription(driver):
     ae = AutoExercise(driver)
 
@@ -223,6 +238,7 @@ def test_cart_subscription(driver):
         ae.subscription()
 
 
+@pytest.mark.smoke
 def test_cart_total(driver):
     ae = AutoExercise(driver)
 
@@ -236,6 +252,7 @@ def test_cart_total(driver):
         ae.product_add_to_cart()
 
 
+@pytest.mark.regression
 def test_verify_product_quantity(driver):
     ae = AutoExercise(driver)
 
@@ -261,6 +278,7 @@ def test_verify_product_quantity(driver):
         ae.verify_product_quantity(4)
 
 
+@pytest.mark.regression
 def test_register_while_checkout(driver):
     ae = AutoExercise(driver)
 
@@ -326,6 +344,7 @@ def test_register_while_checkout(driver):
         ae.delete_account()
 
 
+@pytest.mark.regression
 def test_order_register_before_checkout(driver):
     ae = AutoExercise(driver)
 
@@ -385,6 +404,7 @@ def test_order_register_before_checkout(driver):
         ae.delete_account()
 
 
+@pytest.mark.regression
 def test_login_before_checkout(driver):
     ae = AutoExercise(driver)
 
@@ -450,6 +470,7 @@ def test_login_before_checkout(driver):
         ae.delete_account()
 
 
+@pytest.mark.smoke
 def test_remove_from_cart(driver):
     ae = AutoExercise(driver)
 
@@ -475,6 +496,7 @@ def test_remove_from_cart(driver):
         ae.cart_empty()
 
 
+@pytest.mark.regression
 def test_view_category_products(driver):
     ae = AutoExercise(driver)
 
@@ -506,6 +528,7 @@ def test_view_category_products(driver):
         ae.t_shirts_verify()
 
 
+@pytest.mark.regression
 def test_view_cart_brand_products(driver):
     ae = AutoExercise(driver)
 
@@ -531,6 +554,7 @@ def test_view_cart_brand_products(driver):
         ae.h_m_verify()
 
 
+@pytest.mark.regression
 def test_search_and_verify_cart_after_login(driver):
     ae = AutoExercise(driver)
 
@@ -588,6 +612,7 @@ def test_search_and_verify_cart_after_login(driver):
         ae.verify_panda()
 
 
+@pytest.mark.regression
 def test_add_review_on_product(driver):
     ae = AutoExercise(driver)
 
@@ -613,6 +638,7 @@ def test_add_review_on_product(driver):
         ae.thank_you_text()
 
 
+@pytest.mark.regression
 def test_add_from_recommendations(driver):
     ae = AutoExercise(driver)
 
@@ -632,6 +658,7 @@ def test_add_from_recommendations(driver):
         ae.verify_product_from_recommendations()
 
 
+@pytest.mark.regression
 def test_verify_address_details_in_checkout_page(driver):
     ae = AutoExercise(driver)
 
@@ -669,6 +696,7 @@ def test_verify_address_details_in_checkout_page(driver):
         ae.delete_account()
 
 
+@pytest.mark.regression
 def test_download_invoice(driver):
     ae = AutoExercise(driver)
 
@@ -733,6 +761,7 @@ def test_download_invoice(driver):
         ae.delete_account()
 
 
+@pytest.mark.regression
 def test_scroll_up_using_arrow(driver):
     ae = AutoExercise(driver)
 
@@ -752,6 +781,7 @@ def test_scroll_up_using_arrow(driver):
         ae.verify_top()
 
 
+@pytest.mark.regression
 def test_without_arrow(driver):
     ae = AutoExercise(driver)
 

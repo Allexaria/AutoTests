@@ -1,23 +1,9 @@
-import os
 import random
 import string
-import sys
+from pathlib import Path
 
 import pytest
 from selenium import webdriver
-
-# Normalize import paths for sibling framework folders.
-current_dir = os.path.dirname(__file__)
-workspace_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
-project_paths = [
-    os.path.join(workspace_root, "AutoTests-abobatests"),
-    os.path.join(workspace_root, "UI-framework-abobatests"),
-    os.path.join(workspace_root, "API-framework-develope"),
-]
-
-for p in project_paths:
-    if p not in sys.path:
-        sys.path.insert(0, p)
 
 
 @pytest.fixture
@@ -25,6 +11,19 @@ def driver():
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(options=options)
+    driver.execute_cdp_cmd("Network.enable", {})
+    driver.execute_cdp_cmd(
+        "Network.setBlockedURLs",
+        {
+            "urls": [
+                "*doubleclick.net/*",
+                "*googlesyndication.com/*",
+                "*googleadservices.com/*",
+                "*adservice.google.com/*",
+                "*adnxs.com/*",
+            ]
+        },
+    )
     yield driver
     driver.quit()
 
@@ -63,3 +62,8 @@ def random_username():
         "Ford",
     ]
     return f"{random.choice(first_names)} {random.choice(last_names)}"
+
+
+@pytest.fixture
+def test_file():
+    return (Path(__file__).parent / "resources" / "test_image.png").resolve()
