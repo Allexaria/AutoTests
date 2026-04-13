@@ -71,6 +71,7 @@ docker build -f AutoTests-abobatests/Dockerfile ^
 - Use environment variables or CI/CD variables for tokens.
 - If a token is exposed, rotate/revoke it immediately and replace it in CI.
 - `.env.example` provides placeholders only; real `.env` files are ignored by git.
+- `pre-commit` includes `gitleaks` to prevent committing new secrets.
 
 ## Code Quality Gates
 
@@ -109,4 +110,5 @@ Note: `pre-commit run --all-files` checks tracked files only, so initialize git 
 ## Notes
 
 - This repository intentionally keeps UI and API framework code in sibling folders.
-- `conftest.py` configures import paths so tests can import both frameworks.
+- Import paths are configured in `pytest.ini` (`pythonpath`) instead of runtime `sys.path` mutations.
+- Canonical automated test suite lives in `AutoTests-abobatests/tests`.

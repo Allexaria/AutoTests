@@ -1,16 +1,22 @@
-from pages.HeilHitler.ya_page import YaPage
+import pytest
+from pages.UI_Framework.ya_page import YaPage
+
+pytestmark = [pytest.mark.ui]
 
 
+@pytest.mark.smoke
 def test_ya_ru(driver):
     ya = YaPage(driver)
     ya.open()
 
 
+@pytest.mark.regression
 def test_microphone(driver):
     ya = YaPage(driver)
     ya.mic()
 
 
+@pytest.mark.regression
 def test_svg_camera(driver):
     ya = YaPage(driver)
     ya.open()
@@ -27,12 +33,14 @@ def test_svg_camera(driver):
 # негативные тесты
 
 
+@pytest.mark.regression
 def test_empty_search_query(driver):
     ya = YaPage(driver)
     ya.open()
     ya.perform_empty_search()
 
 
+@pytest.mark.regression
 def test_invalid_image_url_returns_error(driver):
     ya = YaPage(driver)
     ya.open()
@@ -45,6 +53,7 @@ def test_invalid_image_url_returns_error(driver):
     ya.error_message()
 
 
+@pytest.mark.regression
 def test_long_image_url(driver):
     ya = YaPage(driver)
     ya.open()
@@ -60,6 +69,7 @@ def test_long_image_url(driver):
 # Дальше идут просто тест-кейсы
 
 
+@pytest.mark.smoke
 def test_search(driver):
     ya = YaPage(driver)
     ya.open()
@@ -68,6 +78,7 @@ def test_search(driver):
     ya.wait_for_search_results()
 
 
+@pytest.mark.regression
 def test_mts_search(driver):
     ya = YaPage(driver)
     ya.open()
