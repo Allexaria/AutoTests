@@ -1,30 +1,41 @@
-from api_requests_framework import ApiClient
+import pytest
+
+from qa_project.framework.api.api_requests_framework import ApiClient
+
+pytestmark = [pytest.mark.api]
 
 
+@pytest.mark.smoke
 def test_api_product_list():
     ApiClient().verify_get_products_list()
 
 
+@pytest.mark.smoke
 def test_post_product_details():
     ApiClient().verify_post_products_list_returns_405()
 
 
+@pytest.mark.smoke
 def test_get_all_brands_list():
     ApiClient().verify_get_all_brands_list()
 
 
+@pytest.mark.smoke
 def test_put_to_all_brands_list():
     ApiClient().verify_put_to_all_brands_list_returns_405()
 
 
+@pytest.mark.smoke
 def test_post_search_product():
     ApiClient().verify_search_product("tshirt")
 
 
+@pytest.mark.smoke
 def test_post_to_search_products_without_search_product_parameter():
     ApiClient().verify_post_without_search_product_param()
 
 
+@pytest.mark.regression
 def test_create_and_verify_login_delete():
     client = ApiClient()
     email, password = client.post_create_account()
@@ -32,21 +43,25 @@ def test_create_and_verify_login_delete():
     client.delete_account(email=email, password=password)
 
 
+@pytest.mark.smoke
 def test_login_without_email():
     client = ApiClient()
     client.verify_login_without_email(password="somepassword123")
 
 
+@pytest.mark.smoke
 def test_verify_login_wrong_method():
     client = ApiClient()
     client.verify_login_wrong_method(email="gagaga", password="123123")
 
 
+@pytest.mark.smoke
 def test_verify_login_with_wrong_credentials():
     client = ApiClient()
     client.verify_login_with_wrong_credentials(email="gagaga", password="123123")
 
 
+@pytest.mark.regression
 def test_create_update_delete_user_account():
     client = ApiClient()
     email, password = client.post_create_account()
@@ -73,6 +88,7 @@ def test_create_update_delete_user_account():
     client.delete_account(email=email, password=password)
 
 
+@pytest.mark.regression
 def test_get_user_detail_by_email():
     client = ApiClient()
 
