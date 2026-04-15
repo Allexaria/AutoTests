@@ -1,3 +1,3 @@
-from .automation_exercise_page import AutoExercise
+from .pages import AutoExercise
 
 __all__ = ["AutoExercise"]

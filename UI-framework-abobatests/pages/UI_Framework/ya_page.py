@@ -1,5 +1,3 @@
-import time
-
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -156,8 +154,11 @@ class YaPage:
             )
         )
         if play_buttons:
+            initial_class = play_buttons[0].get_attribute("class")
             play_buttons[0].click()
-            time.sleep(6)
+            WebDriverWait(self.driver, 6).until(
+                lambda d: play_buttons[0].get_attribute("class") != initial_class
+            )
 
     def close_yandex_popup(self):
         try:
