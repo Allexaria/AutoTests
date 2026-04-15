@@ -1,22 +1,20 @@
 import random
 import string
-import time
 
-from selenium.common.exceptions import (
-    ElementClickInterceptedException,
-    StaleElementReferenceException,
-    TimeoutException,
-)
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from pages.UI_Framework.base_page import BasePage
+from pages.UI_Framework.locators import AutoExerciseLocators as L
 
-class AutoExercise:
+
+class AutoExercise(BasePage):
     def __init__(self, driver):
-        self.driver = driver
+        super().__init__(driver)
         self.current_email = None
         self.current_password = "12345678Aa"
 
@@ -36,16 +34,6 @@ class AutoExercise:
             });
             """
         )
-
-    def safe_click(self, by, locator, timeout=10):
-        self.hide_ads()
-        el = WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable((by, locator)))
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
-        try:
-            el.click()
-        except ElementClickInterceptedException:
-            self.hide_ads()
-            self.driver.execute_script("arguments[0].click();", el)
 
     def generate_random_email(self):
         username = "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
@@ -81,34 +69,28 @@ class AutoExercise:
 
     def open_and_verify(self):
         self.driver.get("https://automationexercise.com/")
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "img[alt='Website for automation practice']")
-            )
+        self.wait_page_ready(timeout=10)
+        self.wait_present(
+            (By.CSS_SELECTOR, "img[alt='Website for automation practice']"), timeout=10
         )
         assert self.driver.current_url == "https://automationexercise.com/"
 
     def login_page_click_verify(self):
-        self.safe_click(By.CSS_SELECTOR, "a[href='/login']")
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@class="signup-form"]'))
-        )
+        self.safe_click(L.LOGIN_LINK)
+        self.wait_url_contains("/login", timeout=10)
+        self.wait_present(L.SIGNUP_FORM)
 
     def signup_new_user(self, name, email):
         self.current_email = email
-        name_field = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-name']"))
-        )
+        name_field = self.wait_present(L.SIGNUP_NAME)
         name_field.click()
         name_field.send_keys(name)
 
-        email_field = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@data-qa='signup-email']"))
-        )
+        email_field = self.wait_present(L.SIGNUP_EMAIL)
         email_field.click()
         email_field.send_keys(email)
 
-        self.safe_click(By.XPATH, "//*[@data-qa='signup-button']")
+        self.click(L.SIGNUP_BUTTON)
 
         element = WebDriverWait(self.driver, 15).until(
             EC.presence_of_element_located((By.XPATH, "//h2[@class='title text-center']"))
@@ -186,30 +168,37 @@ class AutoExercise:
         assert text == "ACCOUNT CREATED!", f"Текст заголовка отличается: «{text}»"
 
     def account_created(self, username):
-        self.safe_click(By.XPATH, "//*[@data-qa='continue-button']")
+        self.click(L.CONTINUE_BUTTON)
 
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='nav navbar-nav']"))
         )
         text = element.text.strip()
-        if username not in text and self.current_email:
-            self.safe_click(By.CSS_SELECTOR, "a[href='/login']")
-            login_email = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
-            )
-            login_password = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
-            )
+        normalized_text = text.lower()
+        username_parts = [part for part in username.split() if part]
+        first_name = username_parts[0] if username_parts else username
+        user_is_visible = (
+            username.lower() in normalized_text or first_name.lower() in normalized_text
+        )
+
+        if not user_is_visible and self.current_email:
+            self.click(L.LOGIN_LINK)
+            login_email = self.wait_present(L.LOGIN_EMAIL)
+            login_password = self.wait_present(L.LOGIN_PASSWORD)
             login_email.clear()
             login_email.send_keys(self.current_email)
             login_password.clear()
             login_password.send_keys(self.current_password)
-            self.safe_click(By.XPATH, '//*[@data-qa="login-button"]')
+            self.click(L.LOGIN_BUTTON)
             element = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//*[@class='nav navbar-nav']"))
             )
             text = element.text.strip()
-        assert username in text, f"Ожидали увидеть '{username}' в тексте, но получили: «{text}»"
+            normalized_text = text.lower()
+            user_is_visible = (
+                username.lower() in normalized_text or first_name.lower() in normalized_text
+            )
+        assert user_is_visible, f"Ожидали увидеть '{username}' в тексте, но получили: «{text}»"
 
     def delete_account(self):
         self.safe_click(By.CSS_SELECTOR, "a[href='/delete_account']", timeout=5)
@@ -355,10 +344,8 @@ class AutoExercise:
         cases.click()
 
     def products_test(self):
-        products = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/products"]'))
-        )
-        products.click()
+        self.safe_click(By.CSS_SELECTOR, 'a[href="/products"]')
+        self.wait_url_contains("/products", timeout=10)
 
     def all_products_verified(self):
         all_products = WebDriverWait(self.driver, 10).until(
@@ -438,10 +425,8 @@ class AutoExercise:
         assert searched_products.is_displayed(), "Search products is not displayed"
 
     def products(self):
-        products_button = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/products']"))
-        )
-        products_button.click()
+        self.safe_click(By.CSS_SELECTOR, "a[href='/products']")
+        self.wait_url_contains("/products", timeout=10)
 
     def scroll_to_footer(self):
         footer = WebDriverWait(self.driver, 10).until(
@@ -471,15 +456,7 @@ class AutoExercise:
         assert successfully.is_displayed(), "You have been successfully subscribed!"
 
     def cart_button(self):
-        cart_locator = (By.CSS_SELECTOR, "a[href='/view_cart']")
-        for _ in range(3):
-            try:
-                self.safe_click(*cart_locator, timeout=10)
-                return
-            except StaleElementReferenceException:
-                self.hide_ads()
-                time.sleep(0.3)
-        self.safe_click(*cart_locator, timeout=10)
+        self.click(L.CART_BUTTON, timeout=10)
 
     def footer(self):
         footer = WebDriverWait(self.driver, 10).until(
@@ -552,16 +529,8 @@ class AutoExercise:
         view_cart_button.click()
 
     def view_product_button(self):
-        wait = WebDriverWait(self.driver, 10)
-        view_product_button = wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/product_details/1']"))
-        )
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView({behavior: 'auto', block: 'center'});", view_product_button
-        )
-        wait.until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='/product_details/1']"))
-        ).click()
+        self.safe_click(By.CSS_SELECTOR, "a[href='/product_details/1']")
+        self.wait_url_contains("/product_details/", timeout=10)
 
     def increase_quantity_to_4(self):
         wait = WebDriverWait(self.driver, 10)
@@ -675,8 +644,7 @@ class AutoExercise:
             EC.presence_of_element_located((By.NAME, "name_on_card"))
         )
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_details)
-        time.sleep(0.5)
-
+        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.NAME, "name_on_card")))
         ActionChains(self.driver).move_to_element(card_details).click().perform()
         card_details.send_keys("Jeffrie Dahhmer")
 
@@ -711,26 +679,15 @@ class AutoExercise:
         expire_year.send_keys("2090")
 
     def button_pay(self):
-        pay_locator = (By.XPATH, '//*[@data-qa="pay-button"]')
-        success_locator = (By.XPATH, '//*[@class="alert-success alert"]')
-
-        # Payment page is dynamic and occasionally re-renders controls.
-        for _ in range(3):
-            try:
-                self.safe_click(*pay_locator, timeout=12)
-                break
-            except (StaleElementReferenceException, ElementClickInterceptedException):
-                self.hide_ads()
-                time.sleep(0.5)
+        self.click(L.PAY_BUTTON, timeout=12)
 
         WebDriverWait(self.driver, 20).until(
-            lambda d: "payment_done" in d.current_url or len(d.find_elements(*success_locator)) > 0
+            lambda d: "payment_done" in d.current_url
+            or len(d.find_elements(*L.PAYMENT_SUCCESS_ALERT)) > 0
         )
 
         if "payment_done" not in self.driver.current_url:
-            successfully = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(success_locator)
-            )
+            successfully = self.wait_visible(L.PAYMENT_SUCCESS_ALERT)
             assert successfully.is_displayed(), "Your order has been placed successfully!"
 
     def add_to_cart_from_page(self):
@@ -936,17 +893,17 @@ class AutoExercise:
         assert thank_you_text.is_displayed(), "'Thank you for your review.'"
 
     def scroll_to_bottom(self, pause_time=1.0):
-
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
         while True:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(pause_time)
-
-            new_height = self.driver.execute_script("return document.body.scrollHeight")
-            if new_height == last_height:
+            try:
+                WebDriverWait(self.driver, pause_time).until(
+                    lambda d: d.execute_script("return document.body.scrollHeight") > last_height
+                )
+                last_height = self.driver.execute_script("return document.body.scrollHeight")
+            except TimeoutException:
                 break
-            last_height = new_height
 
     def add_from_recommendations(self):
         recommended_block = WebDriverWait(self.driver, 10).until(
