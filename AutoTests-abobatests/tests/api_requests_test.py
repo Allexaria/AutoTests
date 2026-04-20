@@ -12,9 +12,9 @@ user_service = UserService(client)
 
 @pytest.mark.smoke
 def test_api_product_list():
-    response = catalog_service.get_products_list()
+    response, data = catalog_service.get_products_list_validated()
     assert response.status_code == 200
-    assert isinstance(response.json().get("products"), list)
+    assert isinstance(data.products, list)
 
 
 @pytest.mark.smoke
@@ -60,16 +60,18 @@ def test_post_to_search_products_without_search_product_parameter():
 @pytest.mark.regression
 def test_create_and_verify_login_delete():
     user_data = create_user()
-    create_response = user_service.create_account(user_data)
-    assert create_response.json().get("responseCode") == 201
+    create_response, create_data = user_service.create_account_validated(user_data)
+    assert create_data.responseCode == 201
 
-    login_response = user_service.login(email=user_data["email"], password=user_data["password"])
-    assert login_response.json().get("responseCode") == 200
-
-    delete_response = user_service.delete_account(
+    login_response, login_data = user_service.login_validated(
         email=user_data["email"], password=user_data["password"]
     )
-    assert delete_response.json().get("responseCode") == 200
+    assert login_data.responseCode == 200
+
+    delete_response, delete_data = user_service.delete_account_validated(
+        email=user_data["email"], password=user_data["password"]
+    )
+    assert delete_data.responseCode == 200
 
 
 @pytest.mark.smoke
@@ -86,8 +88,8 @@ def test_verify_login_wrong_method():
 
 @pytest.mark.smoke
 def test_verify_login_with_wrong_credentials():
-    response = user_service.login(email="gagaga", password="123123")
-    assert response.json().get("responseCode") == 404
+    response, data = user_service.login_validated(email="gagaga", password="123123")
+    assert data.responseCode == 404
 
 
 @pytest.mark.regression

@@ -1,12 +1,15 @@
+from uuid import uuid4
+
 from faker import Faker
 
 fake = Faker()
 
 
 def create_user():
+    unique_email = f"autotest_{uuid4().hex[:12]}@example.test"
     return {
         "name": fake.first_name(),
-        "email": fake.unique.email(),
+        "email": unique_email,
         "password": fake.password(),
         "title": fake.random_element(elements=("Mr", "Mrs", "Miss")),
         "birth_date": str(fake.random_int(min=1, max=28)),
