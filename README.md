@@ -34,12 +34,15 @@ If I were evolving this into a production test suite, I would:
 
 ## Local setup
 
-1. Create and activate a virtual environment.
-2. Install dependencies:
+1. **Python 3.10+** and **Google Chrome** (Selenium 4 uses bundled driver resolution; a matching Chrome is required).
+2. Create and activate a virtual environment.
+3. Install dependencies (either path installs the same set):
 
 ```bash
-pip install -r AutoTests-abobatests/requirements.txt
+pip install -r requirements.txt
 ```
+
+(Equivalent: `pip install -r AutoTests-abobatests/requirements.txt`.)
 
 ## Run tests
 
@@ -54,6 +57,8 @@ Run with Allure results:
 ```bash
 pytest AutoTests-abobatests/tests --alluredir=allure-results
 ```
+
+The `allure-pytest` package only **writes** raw results (JSON) into `--alluredir`. To get an **HTML** report, install a [JDK](https://adoptium.net/) and the [Allure command-line](https://github.com/allure-framework/allure2/releases), then run `allure generate <dir> -o <output> --clean` and open the report over **http** (e.g. `allure open <output>`) — opening `index.html` via `file://` may show a blank UI in some browsers.
 
 ## Docker build (token is required at build time)
 
@@ -82,10 +87,10 @@ This project uses formatter/linter/type checks to keep codebase production-ready
 - `mypy` for static type checking (critical modules)
 - `pre-commit` to run checks before commits
 
-Install dependencies:
+Install dev/lint dependencies (same as test install):
 
 ```bash
-pip install -r AutoTests-abobatests/requirements.txt
+pip install -r requirements.txt
 ```
 
 Run checks from workspace root:

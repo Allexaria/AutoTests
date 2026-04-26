@@ -1,5 +1,12 @@
 # Local secrets
 .env
+
+# Virtual environment
+.venv/
+
+# Local Allure CLI (optional; install from https://github.com/allure-framework/allure2)
+allure-cli/
+allure-cli-*.zip
 .env.*
 !.env.example
 
@@ -12,6 +19,7 @@ __pycache__/
 
 # Test artifacts
 allure-results/
+allure-results-smoke/
 allure-report/
 *.log
 
