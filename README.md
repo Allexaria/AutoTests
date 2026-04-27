@@ -60,15 +60,42 @@ pytest AutoTests-abobatests/tests --alluredir=allure-results
 
 The `allure-pytest` package only **writes** raw results (JSON) into `--alluredir`. To get an **HTML** report, install a [JDK](https://adoptium.net/) and the [Allure command-line](https://github.com/allure-framework/allure2/releases), then run `allure generate <dir> -o <output> --clean` and open the report over **http** (e.g. `allure open <output>`) — opening `index.html` via `file://` may show a blank UI in some browsers.
 
-## Docker build (token is required at build time)
+## Docker
 
-Token is not stored in repository. Pass it explicitly:
+Optional: [Windows: build on `D:\` and notes for handover](docs/windows-docker-d-drive.md).
+
+Build the image from the **repository root** (`.dockerignore` keeps the context small):
 
 ```bash
-docker build -f AutoTests-abobatests/Dockerfile ^
-  --build-arg GITLAB_API_TOKEN=YOUR_TOKEN ^
-  -t ae-tests .
+docker build -t ae-tests .
 ```
+
+Run tests (Chromium in the image is **headless** by default; `CHROME_BIN` and `SELENIUM_HEADLESS` are set in the `Dockerfile`):
+
+```bash
+docker run --rm -e SELENIUM_HEADLESS=1 ae-tests
+```
+
+Save Allure **raw** results to the host (then `allure generate` / `allure open` on the host, or use the Allure CLI inside the image on that folder):
+
+```bash
+# Linux / macOS / Git Bash
+docker run --rm -e SELENIUM_HEADLESS=1 -v "$(pwd)/allure-results:/app/allure-results" ae-tests
+```
+
+In PowerShell (Docker Desktop):
+
+```powershell
+docker run --rm -e SELENIUM_HEADLESS=1 -v "${PWD}/allure-results:/app/allure-results" ae-tests
+```
+
+Override the test command, e.g. only API or smoke:
+
+```bash
+docker run --rm ae-tests pytest AutoTests-abobatests/tests/api_requests_test.py -q
+```
+
+**Inside the image:** `allure` and `java` (JRE 17) are installed so you can run `allure generate allure-results -o allure-report --clean` after a run if you keep `/app/allure-results` in a volume.
 
 ## Security
 

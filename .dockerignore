@@ -1,0 +1,24 @@
+# VCS and local env
+.git
+.venv
+.env
+.env.*
+
+# Python
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Test / report output (rebuilt in image or mounted at run time)
+allure-results
+allure-report
+allure-results-smoke
+allure-cli
+*.zip
+
+# IDE
+.idea
+.vscode
+.cursor

@@ -1,3 +1,4 @@
+import os
 import random
 import string
 from pathlib import Path
@@ -6,11 +7,33 @@ import pytest
 from selenium import webdriver
 
 
+def _is_truthy(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in ("1", "true", "yes", "on")
+
+
 @pytest.fixture
 def driver():
     options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
+    chrome_bin = os.environ.get("CHROME_BIN", "").strip()
+    if chrome_bin:
+        options.binary_location = chrome_bin
+    if _is_truthy("SELENIUM_HEADLESS"):
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--window-size=1920,1080")
+    else:
+        options.add_argument("--start-maximized")
     driver = webdriver.Chrome(options=options)
+    if not _is_truthy("SELENIUM_HEADLESS"):
+        window_x = int(os.getenv("AE_WINDOW_X", "1920"))
+        window_y = int(os.getenv("AE_WINDOW_Y", "0"))
+        window_width = int(os.getenv("AE_WINDOW_WIDTH", "1440"))
+        window_height = int(os.getenv("AE_WINDOW_HEIGHT", "920"))
+        driver.set_window_rect(
+            x=window_x, y=window_y, width=window_width, height=window_height
+        )
     driver.execute_cdp_cmd("Network.enable", {})
     driver.execute_cdp_cmd(
         "Network.setBlockedURLs",

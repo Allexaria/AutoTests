@@ -1,12 +1,15 @@
+import uuid
+
 from faker import Faker
 
 fake = Faker()
 
 
 def create_user():
+    # Public API DB is shared; Faker emails often collide. UUID keeps accounts unique.
     return {
         "name": fake.first_name(),
-        "email": fake.unique.email(),
+        "email": f"ae_{uuid.uuid4().hex}@example.com",
         "password": fake.password(),
         "title": fake.random_element(elements=("Mr", "Mrs", "Miss")),
         "birth_date": str(fake.random_int(min=1, max=28)),
